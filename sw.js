@@ -1,6 +1,8 @@
 // Network first (so updates show up when online), cache fallback (so it works offline).
 const CACHE = 'antrenman';
-const SHELL = ['./', 'index.html', 'manifest.json', 'icon-180.png', 'icon-192.png', 'icon-512.png'];
+const PICS = 'leg-press cs-row chest-press lat-pulldown leg-curl lateral-raise biceps-curl dead-bug box-squat cable-row incline-press glute-bridge face-pull triceps-pushdown hammer-curl cat-cow';
+const SHELL = ['./', 'index.html', 'manifest.json', 'icon-180.png', 'icon-192.png', 'icon-512.png',
+  ...PICS.split(' ').flatMap(id => [`img/${id}-0.jpg`, `img/${id}-1.jpg`])];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
