@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Antrenman</title>
+<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Antrenman">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..600&display=swap">
+<style>
+/* Geist-style tokens: 100-300 backgrounds, 400-500 borders, 900 secondary text, 1000 primary text */
+:root {
+  color-scheme: light dark;
+  --bg: #fff; --bg2: #fafafa;
+  --g100: #f2f2f2; --g200: #e9e9e9; --g400: #e3e3e3; --g500: #cfcfcf;
+  --g900: #6f6f6f; --g1000: #171717;
+  --green: #138a3e; --green-bg: #ebf8ef; --green-border: #b6e3c4;
+  --blue: #0068d6; --blue-bg: #eef5ff;
+  --red: #d42a30;
+  --shadow: 0 1px 1px rgba(0,0,0,.03), 0 2px 6px rgba(0,0,0,.04);
+  --r: 12px;
+  --sans: "Geist", -apple-system, system-ui, sans-serif;
+  --mono: "Geist Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0a0a0a; --bg2: #000;
+    --g100: #171717; --g200: #202020; --g400: #2a2a2a; --g500: #3d3d3d;
+    --g900: #a1a1a1; --g1000: #ededed;
+    --green: #4ccf75; --green-bg: #0d2416; --green-border: #1d5a32;
+    --blue: #52a8ff; --blue-bg: #0b1d33;
+    --red: #ff6166;
+    --shadow: 0 1px 1px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.3);
+  }
+}
+* { box-sizing: border-box; margin: 0; }
+html { background: var(--bg2); -webkit-text-size-adjust: 100%; }
+body { font: 16px/1.45 var(--sans); color: var(--g1000); background: var(--bg2); -webkit-font-smoothing: antialiased; }
+main {
+  max-width: 520px; margin: 0 auto; min-height: 100dvh; display: flex; flex-direction: column;
+  padding: calc(env(safe-area-inset-top) + 20px) 16px calc(env(safe-area-inset-bottom) + 88px);
+}
+main.nonav { padding-bottom: 0; }
+h1 { font-size: 28px; font-weight: 650; letter-spacing: -.03em; line-height: 1.15; }
+h2 { font-size: 13px; font-weight: 550; color: var(--g900); text-transform: uppercase; letter-spacing: .04em; margin: 28px 0 10px; }
+h3 { font-size: 22px; font-weight: 620; letter-spacing: -.02em; line-height: 1.2; }
+p, .muted { color: var(--g900); }
+.small { font-size: 14px; }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+a { color: inherit; }
+.card { background: var(--bg); border: 1px solid var(--g400); border-radius: var(--r); box-shadow: var(--shadow); padding: 16px; }
+.card + .card { margin-top: 10px; }
+.row { display: flex; align-items: center; gap: 10px; }
+.between { justify-content: space-between; }
+.stack > * + * { margin-top: 10px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.grid2 > .card { margin-top: 0; }
+button, .btn {
+  font: inherit; font-weight: 550; color: var(--g1000); background: var(--bg);
+  border: 1px solid var(--g400); border-radius: 10px; min-height: 44px; padding: 0 16px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  text-decoration: none; cursor: pointer; touch-action: manipulation; user-select: none; -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color .15s, border-color .15s, transform .1s;
+}
+button:active, .btn:active { transform: scale(.98); background: var(--g200); }
+button:focus-visible, .btn:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.primary { background: var(--g1000); color: var(--bg); border-color: var(--g1000); }
+.primary:active { background: var(--g900); }
+.primary.red { background: var(--red); border-color: var(--red); color: #fff; }
+.big { width: 100%; min-height: 56px; font-size: 17px; border-radius: 14px; }
+.ghost { background: transparent; border-color: transparent; color: var(--g900); }
+.danger { color: var(--red); }
+.full { width: 100%; }
+.seg { display: grid; grid-template-columns: repeat(3,1fr); gap: 4px; padding: 4px; background: var(--g100); border-radius: 12px; }
+.seg button { border: 0; background: transparent; min-height: 40px; color: var(--g900); }
+.seg button[aria-pressed="true"] { background: var(--bg); color: var(--g1000); box-shadow: var(--shadow); }
+.list { list-style: none; padding: 0; }
+.list li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 10px 0; border-top: 1px solid var(--g200); }
+.list li:first-child { border-top: 0; padding-top: 0; }
+.list li:last-child { padding-bottom: 0; }
+.list a { text-decoration: none; }
+.stat { font-size: 22px; font-weight: 600; }
+.badge { font-size: 12px; font-weight: 550; padding: 2px 8px; border-radius: 99px; background: var(--g100); color: var(--g900); white-space: nowrap; }
+.badge.ok { background: var(--green-bg); color: var(--green); }
+.field, textarea {
+  font: 500 17px var(--mono); width: 96px; min-height: 44px; text-align: center; color: var(--g1000);
+  background: var(--g100); border: 1px solid var(--g400); border-radius: 10px;
+}
+textarea { font: 16px/1.4 var(--sans); width: 100%; text-align: left; padding: 10px 12px; resize: vertical; }
+
+/* home: week strip */
+.week { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-top: 18px; }
+.day { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12px; color: var(--g900); }
+.day b { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font: 600 14px var(--sans); border: 1px solid transparent; }
+.day.plan b { border-color: var(--g500); color: var(--g1000); }
+.day.done b { background: var(--g1000); color: var(--bg); }
+.day.home b { background: var(--green-bg); color: var(--green); }
+.day.miss b { border: 1px dashed var(--g500); }
+.day.today { color: var(--g1000); font-weight: 600; }
+.day.today b { box-shadow: 0 0 0 2px var(--bg2), 0 0 0 3.5px var(--g1000); }
+
+/* workout */
+.top { display: flex; justify-content: space-between; align-items: center; margin: -8px 0 6px; }
+.segs { display: flex; gap: 4px; margin: 2px 0 14px; }
+.segs button { flex: 1; min-height: 28px; padding: 0; border: 0; border-radius: 0; background: none; }
+.segs button:active { background: none; }
+.segs i { display: block; width: 100%; height: 4px; border-radius: 4px; background: var(--g200); }
+.segs .p i { background: linear-gradient(90deg, var(--g1000) 50%, var(--g200) 50%); }
+.segs .d i { background: var(--g1000); }
+.segs .k i { background: repeating-linear-gradient(90deg, var(--g500) 0 4px, transparent 4px 8px); }
+.segs .c i { height: 8px; }
+.chip {
+  margin-top: 10px; min-height: 36px; padding: 0 12px; border-radius: 99px; font-size: 14px;
+  background: var(--blue-bg); color: var(--blue); border-color: transparent;
+}
+.sets { margin-top: 16px; }
+.sets > * + * { margin-top: 8px; }
+.setrow {
+  width: 100%; min-height: 52px; justify-content: space-between; padding: 0 16px; border-radius: var(--r);
+  font: 500 17px var(--mono); font-variant-numeric: tabular-nums; color: var(--g900);
+}
+.setrow.done { background: var(--green-bg); border-color: var(--green-border); color: var(--g1000); }
+.setrow .mark { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 14px; border: 1.5px solid var(--g500); }
+.setrow.done .mark { background: var(--green); border-color: var(--green); color: var(--bg); }
+.setcard { background: var(--bg); border: 1px solid var(--g1000); border-radius: var(--r); box-shadow: var(--shadow); padding: 12px 14px 14px; }
+.step { display: grid; grid-template-columns: 52px 1fr 52px; align-items: center; margin-top: 10px; }
+.step button { width: 52px; height: 52px; padding: 0; border-radius: 50%; font-size: 24px; font-weight: 400; background: var(--g100); border-color: transparent; }
+.step label { display: flex; flex-direction: column; align-items: center; font-size: 12px; color: var(--g900); }
+.step input {
+  width: 100%; border: 0; background: transparent; color: var(--g1000); text-align: center; padding: 0;
+  font: 600 34px/1.1 var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -.02em; border-radius: 8px;
+}
+details { margin-top: 20px; }
+summary { color: var(--g900); font-size: 14px; font-weight: 550; min-height: 44px; display: flex; align-items: center; cursor: pointer; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "›"; margin-left: 6px; transition: transform .15s; }
+details[open] summary::after { transform: rotate(90deg); }
+.body { flex: 1; padding-bottom: 20px; }
+.dock {
+  position: sticky; bottom: 0; z-index: 5; margin: 0 -16px;
+  padding: 12px 16px calc(env(safe-area-inset-bottom) + 12px);
+  background: color-mix(in srgb, var(--bg2) 85%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--g200);
+}
+.dock .ghost { white-space: nowrap; font-size: 15px; padding: 0 8px; }
+.rest { color: var(--blue); margin-bottom: 12px; }
+.rest b { font: 600 26px/1 var(--mono); font-variant-numeric: tabular-nums; margin-left: 8px; }
+.rest button { min-height: 36px; padding: 0 12px; background: transparent; color: var(--blue); border-color: currentColor; font-size: 14px; }
+.bar { height: 3px; border-radius: 3px; background: var(--blue-bg); overflow: hidden; margin-top: 10px; }
+.bar i { display: block; height: 100%; background: var(--blue); transform-origin: left; transition: transform 1s linear; }
+
+/* bottom nav */
+nav {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; justify-content: center;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--g200);
+}
+nav[hidden] { display: none; }
+nav a {
+  flex: 1; max-width: 173px; min-height: 56px; display: flex; align-items: center; justify-content: center;
+  text-decoration: none; font-size: 14px; font-weight: 550; color: var(--g900); -webkit-tap-highlight-color: transparent;
+}
+nav a[aria-current="page"] { color: var(--g1000); }
+
+/* bottom sheet */
+dialog {
+  margin: auto auto 0; width: 100%; max-width: 520px; border: 0; border-radius: 20px 20px 0 0;
+  padding: 24px 16px calc(env(safe-area-inset-bottom) + 16px);
+  background: var(--bg); color: var(--g1000); overscroll-behavior: contain;
+}
+dialog::backdrop { background: rgba(0,0,0,.45); }
+dialog p { margin: 6px 0 20px; white-space: pre-line; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main id="app"></main>
+<nav id="nav" aria-label="Ana menü">
+  <a href="#/">Ana Sayfa</a>
+  <a href="#/history">Geçmiş</a>
+  <a href="#/settings">Ayarlar</a>
+</nav>
+<dialog id="dlg"><form method="dialog">
+  <h3 id="dlgT"></h3><p id="dlgB"></p>
+  <div class="stack"><button class="primary big" id="dlgOk" value="ok"></button><button class="big" id="dlgNo" value="">Vazgeç</button></div>
+</form></dialog>
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+<script>
+// ---------- Exercise library ----------
+// ponytail: plans live in code; edit these lists to change the program (no plan editor UI).
+const EX = {
+  'leg-press': { n: 'Leg Press', m: 'Ön bacak, kalça, arka bacak', how: 'Ayaklar platformda omuz genişliğinde. Dizleri yaklaşık 90°’ye kadar kontrollü bük, topuklardan iterek aç.', tip: 'Dizleri en üstte kilitleme. Bel ve kalça sırtlıktan kalkmasın.' },
+  'cs-row': { n: 'Chest-Supported Row', m: 'Sırt (lat, rhomboid), arka omuz', how: 'Göğsünü desteğe yasla, kolları uzat. Dirsekleri geriye çekerek kürek kemiklerini sıkıştır.', tip: 'Göğüs desteği bırakmasın; omuzları kulağa doğru kaldırma.' },
+  'chest-press': { n: 'Machine Chest Press', m: 'Göğüs, ön omuz, triceps', how: 'Tutamaklar göğüs hizasında. İterek kolları uzat, yavaşça geri gel.', tip: 'Kürek kemikleri geride ve aşağıda kalsın; dirsekleri tam kilitleme.' },
+  'lat-pulldown': { n: 'Lat Pulldown', m: 'Sırt (lat), biceps', how: 'Barı omuzdan biraz geniş tut. Göğsün üstüne doğru çek, kontrollü bırak.', tip: 'Gövdeyi çok geriye atma; barı ensenin arkasına çekme.' },
+  'leg-curl': { n: 'Seated Leg Curl', m: 'Arka bacak (hamstring)', how: 'Pedi bileğin hemen üstüne ayarla. Topukları aşağı ve geriye çek, yavaşça geri bırak.', tip: 'Kalça koltuktan kalkmasın; ağırlığı düşürmeden kontrollü dön.' },
+  'lateral-raise': { n: 'Dumbbell Lateral Raise', m: 'Yan omuz', how: 'Dambılları yanlardan omuz hizasına kadar kaldır, dirsekler hafif bükük.', tip: 'Hafif ağırlık yeterli; savurma ve omuz silkme yapma.' },
+  'biceps-curl': { n: 'Dumbbell Biceps Curl', m: 'Biceps', how: 'Avuçlar önde, dirsekler gövdeye yakın. Dambılları omuza doğru kaldır, yavaşça indir.', tip: 'Dirsekleri öne kaçırma; gövdeyle sallanma.' },
+  'dead-bug': { n: 'Dead Bug', m: 'Karın, core stabilitesi', how: 'Sırtüstü, kollar yukarıda, dizler 90°. Karşı kol ve bacağı yavaşça uzat, geri getir, taraf değiştir.', tip: 'Bel yere bastırılı kalsın; hareket yavaş ve nefes kontrollü.' },
+  'box-squat': { n: 'Box Squat', m: 'Ön bacak, kalça', how: 'Kutuya/banka doğru kalçayı geriye vererek otur, hafifçe dokun, topuklardan iterek kalk.', tip: 'Kutuya çökme; dizler ayak uçlarıyla aynı yönde.' },
+  'cable-row': { n: 'Seated Cable Row', m: 'Sırt, arka omuz, biceps', how: 'Dik otur, tutamağı karnına doğru çek, kürek kemiklerini sıkıştır, kontrollü uzat.', tip: 'Belden sallanma; omuzlar aşağıda kalsın.' },
+  'incline-press': { n: 'Incline Chest Press', m: 'Üst göğüs, ön omuz, triceps', how: 'Eğimli makinede tutamakları yukarı-öne doğru it, yavaşça geri gel.', tip: 'Omuzları öne yuvarlama; dirsekleri tam kilitleme.' },
+  'glute-bridge': { n: 'Glute Bridge', m: 'Kalça, arka bacak', how: 'Sırtüstü, dizler bükük. Kalçayı sıkarak yukarı kaldır, 1 sn tut, indir.', tip: 'Beli aşırı kavislendirme; itiş topuklardan gelsin.' },
+  'face-pull': { n: 'Face Pull', m: 'Arka omuz, üst sırt, rotator cuff', how: 'İp tutamağı yüz hizasında. Yüzüne doğru çek, elleri kulakların yanına aç.', tip: 'Hafif ağırlık; dirsekler yüksek, boyun rahat.' },
+  'triceps-pushdown': { n: 'Cable Triceps Pushdown', m: 'Triceps', how: 'Dirsekler gövdeye yakın, tutamağı aşağı it, kolları uzat, kontrollü geri gel.', tip: 'Dirsekleri oynatma; gövdeyle bastırma.' },
+  'hammer-curl': { n: 'Hammer Curl', m: 'Biceps, ön kol (brachialis)', how: 'Avuçlar birbirine bakar. Dambılları omza doğru kaldır, yavaşça indir.', tip: 'Dirsekler sabit; sallanma yapma.' },
+  'bird-dog': { n: 'Bird Dog', m: 'Core, bel stabilitesi, kalça', how: 'Dört ayak üstünde. Karşı kol ve bacağı uzat, 1–2 sn tut, geri getir.', tip: 'Bel çukurlaşmasın, kalça dönmesin; yavaş hareket et.' },
+  'cat-cow': { n: 'Cat–Cow', m: 'Omurga mobilitesi', how: 'Dört ayak üstünde. Nefes alırken beli çukurlaştır, verirken sırtı yuvarla.', tip: 'Acele etme; hareketi nefesle eşleştir.' },
+  'chin-tuck': { n: 'Chin Tuck', m: 'Derin boyun kasları, duruş', how: 'Dik dur, çeneyi geriye doğru çekerek “çift çene” yap, 2–3 sn tut.', tip: 'Başı öne eğme; hareket düz geriye doğru.' },
+  'wall-slide': { n: 'Wall Slide', m: 'Omuz, üst sırt, duruş', how: 'Sırtın duvarda, kollar “W” şeklinde. Kolları duvara temas ettirerek yukarı kaydır, geri indir.', tip: 'Bel duvardan kopmasın; ağrı yoksa açıklığı artır.' },
+  'doorway-stretch': { n: 'Doorway Chest Stretch', m: 'Göğüs, ön omuz (esneme)', how: 'Kolları kapı çerçevesine dayayıp bir adım öne çık, göğüste gerilmeyi hisset.', tip: 'Zorlama yok; omuzlar aşağıda, nefes rahat.' },
+};
+// [id, sets, reps, unit('' | 'taraf' | 'sn'), maxSets]
+const PLANS = {
+  A: { name: 'Full Body A', items: [['leg-press',2,12],['cs-row',2,12],['chest-press',2,12],['lat-pulldown',2,12],['leg-curl',2,12],['lateral-raise',1,15,'',2],['biceps-curl',1,12,'',2],['dead-bug',2,8,'taraf']] },
+  B: { name: 'Full Body B', items: [['box-squat',2,10],['cable-row',2,12],['incline-press',2,12],['glute-bridge',2,12],['face-pull',2,15],['triceps-pushdown',1,12,'',2],['hammer-curl',1,12,'',2],['bird-dog',2,8,'taraf']] },
+  H: { name: 'Ev Rutini', home: true, items: [['cat-cow',1,10],['chin-tuck',2,8],['wall-slide',2,10],['glute-bridge',2,12],['bird-dog',2,8,'taraf'],['doorway-stretch',2,20,'sn']] },
+};
+
+// ---------- State (localStorage) ----------
+const KEY = 'fitness-v1', DAY = 864e5;
+const norm = d => ({ active: d.active || null, history: d.history, notes: d.notes || {},
+  settings: { rest: 90, step: 2.5, sound: true, lastBackup: 0, ...d.settings } });
+let S = load();
+function load() {
+  try { const d = JSON.parse(localStorage.getItem(KEY)); if (d && Array.isArray(d.history)) return norm(d); } catch {}
+  return norm({ history: [] });
+}
+function save() { localStorage.setItem(KEY, JSON.stringify(S)); }
+
+// ---------- Helpers ----------
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const nf = v => String(v).replace('.', ',');
+const hasKg = s => s.kg !== '' && s.kg != null;
+function monday(d = new Date()) { const x = new Date(d); x.setHours(0,0,0,0); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x; }
+const sameDay = (a, b) => new Date(a).toDateString() === new Date(b).toDateString();
+const gymDay = d => [1, 3, 5].includes(new Date(d).getDay());
+// A and B simply alternate (= Pzt A, Çar B, Cum A / Pzt B, Çar A, Cum B), so a missed day never skips a workout.
+function nextGym() { const l = S.history.find(h => !h.home); return l && l.plan === 'A' ? 'B' : 'A'; }
+const gymOn = d => S.history.find(h => !h.home && sameDay(h.end, d));
+const suggested = (d = new Date()) => gymDay(d) && !gymOn(d) ? nextGym() : 'H';
+const fmtDate = (t, o = { weekday: 'long', day: 'numeric', month: 'long' }) => new Date(t).toLocaleDateString('tr-TR', o);
+const fmtTime = t => new Date(t).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+function clock(ms) { const s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = String(s % 60).padStart(2, '0'); return h ? `${h}:${String(m).padStart(2,'0')}:${x}` : `${m}:${x}`; }
+const mins = ms => `${Math.max(1, Math.round(ms / 60000))} dk`;
+const unitLabel = u => u === 'sn' ? 'saniye' : u === 'taraf' ? 'tekrar / taraf' : 'tekrar';
+const target = t => `${t.max ? `${t.sets}–${t.max}` : t.sets} × ${t.reps}${t.unit === 'sn' ? ' sn' : t.unit === 'taraf' ? ' / taraf' : ''}`;
+const setText = (s, u) => hasKg(s) ? `${nf(s.kg)} kg × ${s.reps}` : `${s.reps} ${u === 'sn' ? 'sn' : 'tekrar'}`;
+const doneCount = a => a.ex.filter(e => e.sets.some(s => s.done)).length;
+const topKg = sets => Math.max(0, ...sets.map(s => parseFloat(s.kg) || 0));
+function lastSets(id) { // most recent finished session that has this exercise
+  for (const h of S.history) { const e = h.ex.find(e => e.id === id && e.sets.length); if (e) return e.sets; }
+  return [];
+}
+// Double progression: every set of the last session reached the target reps → suggest the next weight step.
+function bump(e) {
+  const p = lastSets(e.id), t = e.target;
+  if (p.length < t.sets || e.sets.some(s => s.done) || !p.every(s => hasKg(s) && s.reps >= t.reps)) return 0;
+  const kg = topKg(p);
+  return e.sets.every(s => s.kg === kg) ? Math.round((kg + S.settings.step) * 100) / 100 : 0;
+}
+function ask(title, body = '', ok = 'Tamam', { danger, cancel = true } = {}) {
+  const d = $('#dlg');
+  $('#dlgT').textContent = title; $('#dlgB').textContent = body;
+  $('#dlgOk').textContent = ok; $('#dlgOk').classList.toggle('red', !!danger); $('#dlgNo').hidden = !cancel;
+  d.returnValue = ''; d.showModal();
+  return new Promise(res => d.addEventListener('close', () => res(d.returnValue === 'ok'), { once: true }));
+}
+// Sound needs a user gesture first (unlock), and only plays while the app is on screen.
+let ac;
+function unlock() { if (!S.settings.sound) return; try { ac ??= new (window.AudioContext || window.webkitAudioContext)(); ac.resume(); } catch {} }
+function beep() {
+  navigator.vibrate?.([200, 100, 200]);
+  if (!ac || !S.settings.sound) return;
+  [0, .25].forEach(d => {
+    const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + d;
+    o.frequency.value = 880; g.gain.setValueAtTime(.2, t); g.gain.exponentialRampToValueAtTime(.001, t + .2);
+    o.connect(g).connect(ac.destination); o.start(t); o.stop(t + .2);
+  });
+}
+let lock; // keep the screen on during a workout (where the browser supports it)
+async function awake() {
+  const want = S.active && location.hash === '#/workout' && !document.hidden;
+  try {
+    if (want && !lock) { lock = await navigator.wakeLock?.request('screen'); lock?.addEventListener('release', () => lock = null); }
+    else if (!want && lock) { lock.release(); lock = null; }
+  } catch {}
+}
+
+// ---------- Actions ----------
+let pick = null, sel = null; // home: manually picked plan · workout: set being edited
+const curEx = () => S.active.ex[S.active.cur];
+const curIdx = e => sel != null && e.sets[sel] ? sel : e.sets.findIndex(s => !s.done);
+function move(i) { const a = S.active; a.cur = i; a.hold = null; sel = null; save(); render(); scrollTo(0, 0); }
+function carryKg(e, i) { e.sets.slice(i + 1).forEach(s => { if (!s.done) s.kg = e.sets[i].kg; }); }
+function markDone(a, e, s) {
+  s.done = Date.now(); e.skipped = false; sel = null;
+  if (!a.home) { a.restTotal = S.settings.rest * 1000; a.restEnd = Date.now() + a.restTotal; }
+  // all sets of this exercise done → move on while resting
+  if (e.sets.every(s => s.done) && a.cur < a.ex.length - 1) { a.cur++; scrollTo(0, 0); }
+  save(); render();
+}
+const A = {
+  pick(k) { pick = k; render(); },
+  start(k) {
+    const p = PLANS[k];
+    S.active = {
+      id: Date.now().toString(36), plan: k, name: p.name, home: !!p.home, start: Date.now(), cur: 0, restEnd: 0,
+      ex: p.items.map(([id, sets, reps, unit = '', max]) => {
+        const prev = lastSets(id);
+        return { id, name: EX[id].n, target: { sets, reps, unit, max },
+          // last time's set count (e.g. 2 sets of an isolation move) carries over, within the plan's range
+          sets: Array.from({ length: Math.min(Math.max(sets, prev.length), max || sets) }, (_, i) => {
+            const ps = prev[i] || prev[prev.length - 1];
+            return { kg: p.home ? '' : (ps?.kg ?? ''), reps: unit === 'sn' ? reps : (ps?.reps ?? reps), done: 0 };
+          }) };
+      }),
+    };
+    pick = null; save(); location.hash = '#/workout';
+  },
+  resume() { location.hash = '#/workout'; },
+  async discard() {
+    if (!await ask('Antrenman silinsin mi?', 'Devam eden antrenman ve girdiğin setler silinir. Bu geri alınamaz.', 'Antrenmanı Sil', { danger: true })) return;
+    S.active = null; save(); location.hash = '#/'; render();
+  },
+  complete() {
+    const a = S.active, e = curEx(), s = e.sets[curIdx(e)];
+    if (a.hold) { a.hold = null; save(); return render(); } // stop a running hold timer
+    if (!s || s.done) return;
+    if (e.target.unit === 'sn') { // timed hold: count down, then complete the set automatically
+      a.hold = { i: curIdx(e), end: Date.now() + (parseFloat(s.reps) || e.target.reps) * 1000 }; a.restEnd = 0;
+      save(); return render();
+    }
+    markDone(a, e, s);
+  },
+  step(arg) {
+    const [f, dir] = arg.split(':'), e = curEx(), i = curIdx(e), s = e.sets[i];
+    const inc = f === 'kg' ? S.settings.step : e.target.unit === 'sn' ? 5 : 1;
+    s[f] = Math.max(0, Math.round(((parseFloat(s[f]) || 0) + dir * inc) * 100) / 100);
+    if (f === 'kg') carryKg(e, i);
+    save(); render();
+  },
+  bump() { const e = curEx(), kg = bump(e); if (kg) { e.sets.forEach(s => s.kg = kg); save(); render(); } },
+  sel(i) { sel = sel === +i ? null : +i; S.active.hold = null; render(); },
+  doneEdit() { sel = null; render(); },
+  undo() { const e = curEx(); e.sets[curIdx(e)].done = 0; sel = null; save(); render(); },
+  addSet() { const e = curEx(), l = e.sets[e.sets.length - 1] || { kg: '', reps: e.target.reps }; e.sets.push({ kg: l.kg, reps: l.reps, done: 0 }); sel = null; save(); render(); },
+  delSet() { const e = curEx(), i = curIdx(e); if (e.sets.length > 1 && i >= 0) { e.sets.splice(i, 1); sel = null; S.active.hold = null; save(); render(); } },
+  next() { const a = S.active; if (a.cur < a.ex.length - 1) move(a.cur + 1); },
+  prev() { const a = S.active; if (a.cur > 0) move(a.cur - 1); },
+  skip() { const a = S.active; curEx().skipped = true; if (a.cur < a.ex.length - 1) move(a.cur + 1); else { save(); render(); } },
+  go(i) { move(+i); },
+  restAdd() { const a = S.active; a.restEnd += 30000; a.restTotal += 30000; save(); tick(); },
+  restSkip() { S.active.restEnd = 0; save(); render(); },
+  async finish() {
+    const a = S.active;
+    if (!a.ex.some(e => e.sets.some(s => s.done))) {
+      if (await ask('Hiç set tamamlanmadı', 'Antrenman kaydedilmeden silinsin mi?', 'Sil', { danger: true })) { S.active = null; save(); location.hash = '#/'; }
+      return;
+    }
+    const left = a.ex.filter(e => !e.skipped && e.sets.some(s => !s.done)).length;
+    if (left && !await ask('Antrenman bitirilsin mi?', `${left} harekette tamamlanmamış set var. Yapılmayan setler kaydedilmez.`, 'Bitir')) return;
+    const ex = a.ex.map(e => ({ id: e.id, name: e.name, target: e.target, sets: e.sets.filter(s => s.done) }));
+    // personal records: heavier than anything logged before (the first time doesn't count)
+    const prs = ex.filter(e => { const old = Math.max(0, ...S.history.flatMap(h => h.ex.filter(x => x.id === e.id).map(x => topKg(x.sets)))); return old && topKg(e.sets) > old; }).map(e => e.id);
+    const h = { id: a.id, plan: a.plan, name: a.name, home: a.home, start: a.start, end: Date.now(), ex, prs };
+    S.history.unshift(h); S.active = null; save();
+    location.hash = '#/summary/' + h.id;
+  },
+  async delHistory(id) {
+    if (!await ask('Kayıt silinsin mi?', 'Bu antrenman geçmişten silinir. Bu geri alınamaz.', 'Kaydı Sil', { danger: true })) return;
+    S.history = S.history.filter(h => h.id !== id); save(); location.hash = '#/history';
+  },
+  async exportData() {
+    const name = `antrenman-yedek-${new Date().toISOString().slice(0, 10)}.json`;
+    const blob = new Blob([JSON.stringify(S)], { type: 'application/json' });
+    const file = new File([blob], name, { type: 'application/json' });
+    try {
+      if (navigator.canShare?.({ files: [file] })) await navigator.share({ files: [file], title: name });
+      else { const l = document.createElement('a'); l.href = URL.createObjectURL(blob); l.download = name; l.click(); }
+    } catch (err) { if (err.name !== 'AbortError') ask('Yedek oluşturulamadı', err.message, 'Tamam', { cancel: false }); return; }
+    S.settings.lastBackup = Date.now(); save(); render();
+  },
+  importData() { $('#importFile').click(); },
+  async wipe() {
+    if (!await ask('Tüm veriler silinsin mi?', 'Antrenman geçmişi, notlar ve ayarlar silinir.', 'Devam', { danger: true })) return;
+    if (!await ask('Emin misin?', 'Yedek almadıysan veriler geri getirilemez.', 'Hepsini Sil', { danger: true })) return;
+    S = norm({ history: [] }); save(); location.hash = '#/'; render();
+  },
+};
+
+$('#importFile').addEventListener('change', async ev => {
+  const f = ev.target.files[0]; ev.target.value = '';
+  if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if (!d || !Array.isArray(d.history) || !d.settings) throw new Error('Bu dosya bir antrenman yedeği değil.');
+    if (!await ask('Yedek geri yüklensin mi?', `Yedekte ${d.history.length} antrenman var. Şu anki verilerin yerine geçer.`, 'Geri Yükle')) return;
+    S = norm(d); save(); render();
+  } catch (err) { ask('Geri yükleme başarısız', err.message, 'Tamam', { cancel: false }); }
+});
+
+// ---------- Views ----------
+function weekStrip() {
+  const today = new Date(); let nx = nextGym();
+  return `<div class="week" role="list" aria-label="Bu hafta">${['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'].map((n, i) => {
+    const d = monday(); d.setDate(d.getDate() + i);
+    const g = gymOn(d), past = d < today && !sameDay(d, today);
+    let cls = '', txt = '', label = 'boş gün';
+    if (g) { cls = 'done'; txt = g.plan; label = `${g.name} tamamlandı`; }
+    else if (S.history.some(h => h.home && sameDay(h.end, d))) { cls = 'home'; txt = '✓'; label = 'ev rutini tamamlandı'; }
+    else if (gymDay(d) && past) { cls = 'miss'; txt = '–'; label = 'yapılmadı'; }
+    else if (gymDay(d)) { cls = 'plan'; txt = nx; label = `Full Body ${nx} planlı`; nx = nx === 'A' ? 'B' : 'A'; }
+    return `<div class="day ${cls} ${sameDay(d, today) ? 'today' : ''}" role="listitem" aria-label="${n}: ${label}"><span>${n}</span><b>${txt}</b></div>`;
+  }).join('')}</div>`;
+}
+
+function home() {
+  const a = S.active, last = S.history.find(h => !h.home);
+  const thisWeek = S.history.filter(h => !h.home && h.end >= monday()).length;
+  const k = pick || suggested(), p = PLANS[k], doneToday = gymOn(new Date());
+  const lastSame = S.history.find(h => h.plan === k);
+  const stale = !S.settings.lastBackup || Date.now() - S.settings.lastBackup > 14 * DAY;
+  const sub = doneToday && !pick ? `Bugün ${esc(doneToday.name)} tamamlandı ✓`
+    : `${k === suggested() ? 'Bugün için önerilen' : 'Elle seçildi'}${k === 'H' ? ` · Sıradaki salon günü: ${nextGym()}` : ''}`;
+  return `
+  <p class="small">${esc(fmtDate(Date.now()))}</p>
+  <h1>${a ? 'Antrenman sürüyor' : esc(p.name)}</h1>
+  ${a ? '' : `<p class="small" style="margin-top:4px">${sub}</p>`}
+  ${weekStrip()}
+  ${a ? `
+    <div class="card stack" style="margin-top:18px">
+      <div class="row between"><strong>${esc(a.name)}</strong><span class="badge">${doneCount(a)}/${a.ex.length} hareket</span></div>
+      <p class="small">${fmtTime(a.start)}’de başladı · <span class="num">${clock(Date.now() - a.start)}</span></p>
+      <button class="primary big" data-act="resume">Antrenmana Devam Et</button>
+      <button class="ghost danger full" data-act="discard">Antrenmanı Sil…</button>
+    </div>` : `
+    <div class="seg" style="margin-top:18px" role="group" aria-label="Antrenman seç">
+      ${['A','B','H'].map(x => `<button data-act="pick" data-arg="${x}" aria-pressed="${x === k}">${x === 'H' ? 'Ev' : x}</button>`).join('')}
+    </div>
+    <button class="primary big" style="margin-top:10px" data-act="start" data-arg="${k}">Antrenmana Başla</button>
+    <p class="small" style="margin-top:8px;text-align:center">${p.items.length} hareket${lastSame ? ` · geçen sefer ${mins(lastSame.end - lastSame.start)}` : ''}</p>
+    <div class="card" style="margin-top:12px">
+      <ul class="list">${p.items.map(([id, sets, reps, unit = '', max]) => { const kg = p.home ? 0 : topKg(lastSets(id)); return `
+        <li><a href="#/ex/${id}">${esc(EX[id].n)}</a><span class="muted num small" style="white-space:nowrap">${target({ sets, reps, unit, max })}${kg ? ` · ${nf(kg)} kg` : ''}</span></li>`; }).join('')}
+      </ul>
+    </div>`}
+  <h2>Özet</h2>
+  <div class="grid2">
+    <div class="card"><p class="small">Bu hafta</p><div class="stat num">${thisWeek}<span class="muted small"> / 3</span></div></div>
+    <div class="card"><p class="small">Son antrenman</p>
+      ${last ? `<div class="stat" style="font-size:17px">${esc(fmtDate(last.end, { day: 'numeric', month: 'short' }))}</div><p class="small">${esc(last.name)} · ${mins(last.end - last.start)}</p>`
+             : `<div class="stat" style="font-size:17px">—</div><p class="small">Henüz yok</p>`}
+    </div>
+  </div>
+  ${stale && S.history.length ? `<div class="card row between" style="margin-top:10px"><p class="small">2 haftadır yedek alınmadı.</p><button data-act="exportData">Yedekle</button></div>` : ''}`;
+}
+
+function workout() {
+  const a = S.active, e = a.ex[a.cur], t = e.target, isLast = a.cur === a.ex.length - 1;
+  const ci = curIdx(e), s = e.sets[ci], allDone = e.sets.every(s => s.done);
+  const prev = lastSets(e.id), ps = prev[ci] || prev[prev.length - 1], up = a.home ? 0 : bump(e), note = S.notes[e.id];
+  const resting = a.restEnd > Date.now(), u = unitLabel(t.unit);
+  const primary = a.hold ? ['complete', `Durdur · <span class="num" id="hold">${clock(a.hold.end - Date.now())}</span>`]
+    : s && !s.done ? ['complete', t.unit === 'sn' ? `${s.reps} sn Başlat` : `${ci + 1}. Seti Tamamla`]
+    : s ? ['doneEdit', 'Tamam']
+    : isLast ? ['finish', 'Antrenmanı Bitir'] : ['next', 'Sonraki Hareket'];
+  const stepper = (f, label, mode) => `
+    <div class="step">
+      <button data-act="step" data-arg="${f}:-1" aria-label="${label} azalt">−</button>
+      <label><input inputmode="${mode}" enterkeyhint="done" data-f="${f}" value="${esc(nf(s[f]))}" placeholder="–" aria-label="${label}"><span>${f === 'kg' ? 'kg' : u}</span></label>
+      <button data-act="step" data-arg="${f}:1" aria-label="${label} artır">+</button>
+    </div>`;
+  return `
+  <div class="body">
+  <div class="top">
+    <a class="btn ghost" href="#/" style="padding-left:0" aria-label="Ana sayfaya dön">‹ Çık</a>
+    <span class="num muted" id="elapsed">${clock(Date.now() - a.start)}</span>
+    <button class="ghost" data-act="finish" style="padding-right:0">Bitir</button>
+  </div>
+  <div class="row between small muted"><span>${esc(a.name)}</span><span class="num">${a.cur + 1}/${a.ex.length}</span></div>
+  <div class="segs">${a.ex.map((x, i) => { const d = x.sets.filter(s => s.done).length;
+    return `<button class="${x.skipped ? 'k' : d && d === x.sets.length ? 'd' : d ? 'p' : ''} ${i === a.cur ? 'c' : ''}" data-act="go" data-arg="${i}" ${i === a.cur ? 'aria-current="step"' : ''} aria-label="${i + 1}. ${esc(x.name)}: ${x.skipped ? 'atlandı' : `${d}/${x.sets.length} set`}"><i></i></button>`; }).join('')}
+  </div>
+  <div class="row between" style="align-items:flex-start">
+    <h3><a href="#/ex/${e.id}" style="text-decoration:none">${esc(e.name)} <span class="muted" aria-hidden="true">›</span></a></h3>
+    ${e.skipped ? '<span class="badge">Atlandı</span>' : allDone ? '<span class="badge ok">✓ Tamam</span>' : ''}
+  </div>
+  <p class="small" style="margin-top:2px">Hedef <span class="num">${target(t)}</span>${note ? ` · ${esc(note)}` : ''}</p>
+  ${up ? `<button class="chip" data-act="bump">Geçen sefer hedef tamam · ${nf(up)} kg dene</button>` : ''}
+  <div class="sets">${e.sets.map((x, i) => i === ci ? `
+    <div class="setcard">
+      <div class="row between"><strong>Set ${i + 1}</strong>
+        ${x.done ? '<button class="ghost" style="min-height:32px;padding:0" data-act="undo">Tamamlanmadı yap</button>'
+                 : ps ? `<span class="small muted">Önceki <span class="num">${esc(setText(ps, t.unit))}</span></span>` : ''}</div>
+      ${a.home ? '' : stepper('kg', 'Ağırlık', 'decimal')}
+      ${stepper('reps', t.unit === 'sn' ? 'Süre' : 'Tekrar', 'numeric')}
+    </div>` : `
+    <button class="setrow ${x.done ? 'done' : ''}" data-act="sel" data-arg="${i}" aria-label="Set ${i + 1}: ${esc(setText(x, t.unit))}, ${x.done ? 'tamamlandı' : 'bekliyor'}. Düzenle">
+      <span>${i + 1}</span><span>${esc(setText(x, t.unit))}</span><span class="mark" aria-hidden="true">${x.done ? '✓' : ''}</span>
+    </button>`).join('')}
+  </div>
+  <div class="row" style="margin-top:6px">
+    <button class="ghost" style="padding-left:0" data-act="addSet">+ Set ekle</button>
+    ${s && !s.done && e.sets.length > 1 ? `<button class="ghost" data-act="delSet">Set ${ci + 1}’i sil</button>` : ''}
+  </div>
+  <details><summary>Tüm hareketler</summary>
+    <div class="card"><ul class="list">${a.ex.map((x, i) => `
+      <li><button class="ghost" style="padding:0;min-height:32px;text-align:left;${i === a.cur ? 'color:var(--g1000)' : ''}" data-act="go" data-arg="${i}">${i + 1}. ${esc(x.name)}</button>
+      <span class="badge ${x.sets.length && x.sets.every(s => s.done) ? 'ok' : ''}">${x.skipped ? 'Atlandı' : `${x.sets.filter(s => s.done).length}/${x.sets.length}`}</span></li>`).join('')}
+    </ul></div>
+  </details>
+  </div>
+  <div class="dock">
+    ${resting ? `
+    <div class="rest">
+      <div class="row between"><span>Dinlenme<b id="rest">${clock(a.restEnd - Date.now())}</b></span>
+        <span class="row"><button data-act="restAdd">+30 sn</button><button data-act="restSkip">Geç</button></span></div>
+      <div class="bar"><i id="restbar" style="transform:scaleX(${(a.restEnd - Date.now()) / (a.restTotal || S.settings.rest * 1000)})"></i></div>
+    </div>` : ''}
+    <button class="primary big" data-act="${primary[0]}">${primary[1]}</button>
+    <div class="row between" style="margin-top:6px">
+      <button class="ghost" data-act="prev" ${a.cur ? '' : 'disabled style="visibility:hidden"'}>‹ Önceki</button>
+      ${!allDone && !isLast ? '<button class="ghost" data-act="skip">Hareketi Atla</button>' : '<span></span>'}
+      <button class="ghost" data-act="next" ${isLast ? 'disabled style="visibility:hidden"' : ''}>Sonraki ›</button>
+    </div>
+  </div>`;
+}
+
+function historyList() {
+  if (!S.history.length) return `<h1>Geçmiş</h1><div class="card" style="margin-top:16px"><p>Henüz tamamlanan antrenman yok. İlk antrenmanını bitirdiğinde burada görünecek.</p></div>`;
+  return `<h1>Geçmiş</h1><div style="margin-top:16px">${S.history.map(h => `
+    <a class="card row between" href="#/history/${h.id}" style="text-decoration:none;display:flex">
+      <div><strong>${esc(h.name)}</strong><p class="small">${esc(fmtDate(h.end, { weekday: 'short', day: 'numeric', month: 'long' }))} · ${mins(h.end - h.start)}</p></div>
+      <span class="row">${h.prs?.length ? `<span class="badge ok">${h.prs.length} rekor</span>` : ''}<span class="badge">${h.ex.filter(e => e.sets.length).length}/${h.ex.length}</span></span>
+    </a>`).join('')}</div>`;
+}
+
+function historyDetail(id, summary) {
+  const h = S.history.find(h => h.id === id);
+  if (!h) return `<h1>Bulunamadı</h1><p style="margin-top:8px"><a href="#/history">Geçmişe dön</a></p>`;
+  const sets = h.ex.reduce((n, e) => n + e.sets.length, 0);
+  const vol = h.ex.reduce((n, e) => n + e.sets.reduce((m, s) => m + (parseFloat(s.kg) || 0) * (parseFloat(s.reps) || 0), 0), 0);
+  return `
+  <div class="body">
+  ${summary ? '' : `<a class="btn ghost" href="#/history" style="padding-left:0;margin-top:-8px">‹ Geçmiş</a>`}
+  <h1 style="margin-top:${summary ? 24 : 4}px">${summary ? 'Antrenman tamam ✓' : esc(h.name)}</h1>
+  <p class="small" style="margin-top:4px">${summary ? esc(h.name) + ' · ' : ''}${esc(fmtDate(h.end))} · ${fmtTime(h.start)}–${fmtTime(h.end)}</p>
+  <div class="grid2" style="margin-top:16px;grid-template-columns:repeat(3,1fr)">
+    <div class="card"><p class="small">Süre</p><div class="stat num">${Math.max(1, Math.round((h.end - h.start) / 60000))}<span class="small muted"> dk</span></div></div>
+    <div class="card"><p class="small">Set</p><div class="stat num">${sets}</div></div>
+    <div class="card"><p class="small">Hareket</p><div class="stat num">${h.ex.filter(e => e.sets.length).length}<span class="small muted">/${h.ex.length}</span></div></div>
+  </div>
+  ${vol ? `<p class="small" style="margin-top:10px">Toplam kaldırılan: <span class="num">${Math.round(vol).toLocaleString('tr-TR')} kg</span></p>` : ''}
+  <h2>Hareketler</h2>
+  <div class="card"><ul class="list">${h.ex.map(e => `
+    <li><span><a href="#/ex/${e.id}">${esc(e.name)}</a>${h.prs?.includes(e.id) ? ' <span class="badge ok">Rekor</span>' : ''}</span>
+    <span class="num small ${e.sets.length ? '' : 'muted'}" style="text-align:right;white-space:nowrap">${e.sets.length ? e.sets.map(s => esc(setText(s, e.target.unit))).join('<br>') : 'Yapılmadı'}</span></li>`).join('')}
+  </ul></div>
+  ${summary ? '' : `<button class="ghost danger full" style="margin-top:20px" data-act="delHistory" data-arg="${h.id}">Bu Kaydı Sil…</button>`}
+  </div>
+  ${summary ? `<div class="dock"><a class="btn primary big" href="#/">Tamam</a></div>` : ''}`;
+}
+
+function spark(v) {
+  const w = 300, h = 56, p = 6, mn = Math.min(...v), r = Math.max(...v) - mn || 1;
+  const pts = v.map((x, i) => [p + i * (w - 2 * p) / (v.length - 1), h - p - (x - mn) / r * (h - 2 * p)].map(n => n.toFixed(1)));
+  return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Ağırlık gelişimi: ${nf(v[0])} kg’dan ${nf(v.at(-1))} kg’a" style="width:100%;height:56px;display:block">
+    <polyline fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="${pts.join(' ')}"/>
+    <circle cx="${pts.at(-1)[0]}" cy="${pts.at(-1)[1]}" r="3.5" fill="currentColor"/></svg>`;
+}
+
+function exercise(id) {
+  const x = EX[id];
+  if (!x) return `<h1>Bulunamadı</h1>`;
+  const all = S.history.flatMap(h => h.ex.filter(e => e.id === id && e.sets.length).map(e => ({ t: h.end, sets: e.sets, u: e.target.unit })));
+  const kgs = all.map(l => topKg(l.sets)).filter(Boolean).reverse();
+  return `
+  <button class="ghost" style="padding-left:0;margin-top:-8px;align-self:flex-start" onclick="history.back()">‹ Geri</button>
+  <h1 style="margin-top:4px">${esc(x.n)}</h1>
+  <p class="small" style="margin-top:4px">${esc(x.m)}</p>
+  <div class="card stack" style="margin-top:16px">
+    <div><strong>Nasıl yapılır</strong><p>${esc(x.how)}</p></div>
+    <div><strong>Dikkat</strong><p>${esc(x.tip)}</p></div>
+  </div>
+  <a class="btn full" style="margin-top:10px" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${encodeURIComponent(x.n + ' exercise proper form')}">YouTube’da izle ↗</a>
+  <h2><label for="note">Notum</label></h2>
+  <textarea id="note" data-id="${id}" rows="2" placeholder="Koltuk ayarı, tutuş, hatırlatma…">${esc(S.notes[id])}</textarea>
+  <p class="small" style="margin-top:6px">Antrenman sırasında hareketin altında görünür.</p>
+  <h2>Gelişim</h2>
+  ${kgs.length > 1 ? `<div class="card"><div class="row between small"><span class="muted">En ağır set</span><span class="num">${nf(kgs[0])} → ${nf(kgs.at(-1))} kg</span></div>${spark(kgs)}</div>` : ''}
+  ${all.length ? `<div class="card"><ul class="list">${all.slice(0, 12).map(l => `
+    <li><span>${esc(fmtDate(l.t, { day: 'numeric', month: 'short' }))}</span><span class="num small" style="text-align:right">${l.sets.map(s => esc(setText(s, l.u))).join(', ')}</span></li>`).join('')}
+  </ul></div>` : `<p class="small">Bu hareket için henüz kayıt yok.</p>`}`;
+}
+
+function settings() {
+  const st = S.settings;
+  return `
+  <h1>Ayarlar</h1>
+  <h2>Antrenman</h2>
+  <div class="card stack">
+    <div class="row between"><label for="rest">Dinlenme süresi (sn)</label>
+      <input id="rest" class="field" inputmode="numeric" value="${st.rest}"></div>
+    <div class="row between"><label for="step">Ağırlık adımı (kg)<p class="small">+ ve − düğmelerinin artışı</p></label>
+      <input id="step" class="field" inputmode="decimal" value="${nf(st.step)}"></div>
+    <label class="row between" style="min-height:44px">Süre bitince sesli uyarı
+      <input id="sound" type="checkbox" switch ${st.sound ? 'checked' : ''} style="width:22px;height:22px;accent-color:var(--g1000)"></label>
+  </div>
+  <h2>Yedekleme</h2>
+  <div class="card stack">
+    <p class="small">Veriler sadece bu cihazda duruyor. Son yedek: ${st.lastBackup ? esc(fmtDate(st.lastBackup, { day: 'numeric', month: 'long', year: 'numeric' })) : 'hiç alınmadı'}.</p>
+    <div class="grid2"><button data-act="exportData">Yedekle</button><button data-act="importData">Geri Yükle…</button></div>
+  </div>
+  <h2>Hareketler</h2>
+  <div class="card"><ul class="list">${Object.entries(EX).map(([id, x]) => `<li><a href="#/ex/${id}" style="flex:1">${esc(x.n)}</a><span class="muted" aria-hidden="true">›</span></li>`).join('')}</ul></div>
+  <h2>Veri</h2>
+  <button class="danger full" data-act="wipe">Tüm Verileri Sil…</button>
+  <p class="small" style="margin-top:16px;text-align:center">${S.history.length} antrenman kayıtlı</p>`;
+}
+
+// ---------- Router ----------
+function render() {
+  const [, page = '', arg] = location.hash.split('/');
+  let html, nav = page;
+  if (page === 'workout' && S.active) html = workout();
+  else if (page === 'history' && arg) { html = historyDetail(arg); nav = 'history'; }
+  else if (page === 'summary') html = historyDetail(arg, true);
+  else if (page === 'history') html = historyList();
+  else if (page === 'ex') { html = exercise(arg); nav = '-'; }
+  else if (page === 'settings') html = settings();
+  else { html = home(); nav = ''; }
+  const bare = (page === 'workout' && S.active) || page === 'summary';
+  $('#app').innerHTML = html;
+  $('#app').classList.toggle('nonav', bare);
+  $('#nav').hidden = bare;
+  document.querySelectorAll('nav a').forEach(l => { if (l.getAttribute('href') === '#/' + nav) l.setAttribute('aria-current', 'page'); else l.removeAttribute('aria-current'); });
+  awake();
+}
+
+let pressing = false; // a button press is in flight: don't replace the DOM under the finger
+document.addEventListener('pointerdown', ev => {
+  if (!ev.target.closest('[data-act]')) return;
+  pressing = true; setTimeout(() => pressing = false, 600);
+  if (document.activeElement?.dataset?.f) document.activeElement.blur(); // commit a value being typed first
+}, true);
+document.addEventListener('click', ev => {
+  const b = ev.target.closest('[data-act]');
+  if (!b || b.disabled) return;
+  pressing = false; if (S.active) unlock();
+  A[b.dataset.act](b.dataset.arg);
+});
+document.addEventListener('change', ev => {
+  const t = ev.target, num = () => parseFloat(t.value.trim().replace(',', '.'));
+  if (t.id === 'rest') { const v = Math.round(num()); if (v >= 5 && v <= 900) S.settings.rest = v; t.value = S.settings.rest; return save(); }
+  if (t.id === 'step') { const v = num(); if (v > 0 && v <= 50) S.settings.step = v; t.value = nf(S.settings.step); return save(); }
+  if (t.id === 'sound') { S.settings.sound = t.checked; return save(); }
+  if (t.id === 'note') { const v = t.value.trim(); if (v) S.notes[t.dataset.id] = v; else delete S.notes[t.dataset.id]; return save(); }
+  if (!t.dataset.f || !S.active) return;
+  const e = curEx(), i = curIdx(e), f = t.dataset.f, v = num();
+  e.sets[i][f] = Number.isFinite(v) && v >= 0 ? v : (f === 'kg' ? '' : e.target.reps);
+  if (f === 'kg' && e.sets[i].kg !== '') carryKg(e, i);
+  save();
+  if (!pressing) render();
+});
+document.addEventListener('focusin', ev => { if (ev.target.dataset?.f) ev.target.select(); });
+document.addEventListener('keydown', ev => { if (ev.key === 'Enter' && ev.target.tagName === 'INPUT') ev.target.blur(); });
+
+// Timers are computed from timestamps, so they stay correct after the screen was locked.
+function tick() {
+  const a = S.active; if (!a) return;
+  const el = $('#elapsed'); if (el) el.textContent = clock(Date.now() - a.start);
+  const typing = !!document.activeElement?.dataset?.f, onPage = location.hash === '#/workout';
+  if (a.hold) {
+    const left = a.hold.end - Date.now(), e = curEx(), s = e.sets[a.hold.i];
+    if (left <= 0) { a.hold = null; beep(); if (s && !s.done) markDone(a, e, s); else { save(); render(); } }
+    else if ($('#hold')) $('#hold').textContent = clock(left);
+  }
+  if (a.restEnd) {
+    const left = a.restEnd - Date.now();
+    if (left <= 0) { a.restEnd = 0; save(); beep(); if (onPage && !typing) render(); }
+    else if ($('#rest')) { $('#rest').textContent = clock(left); $('#restbar').style.transform = `scaleX(${left / (a.restTotal || S.settings.rest * 1000)})`; }
+  }
+}
+setInterval(tick, 1000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && !document.activeElement?.dataset?.f) { tick(); render(); } });
+addEventListener('hashchange', () => { sel = null; render(); scrollTo(0, 0); });
+render();
+
+if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js');
+
+// Self-check: open index.html?test and look at the console.
+if (location.search === '?test') {
+  const keep = S;
+  S = norm({ history: [] });
+  console.assert(nextGym() === 'A', 'first workout is A');
+  S.history = [{ plan: 'H', home: true, end: 1, ex: [] }, { plan: 'A', end: 0, ex: [{ id: 'x', sets: [{ kg: 40, reps: 12 }, { kg: 40, reps: 12 }] }] }];
+  console.assert(nextGym() === 'B', 'B follows A, home routine ignored');
+  const e = { id: 'x', target: { sets: 2, reps: 12 }, sets: [{ kg: 40, reps: 12 }, { kg: 40, reps: 12 }] };
+  console.assert(bump(e) === 42.5, 'all sets hit target → +step');
+  S.history[1].ex[0].sets[1].reps = 11;
+  console.assert(bump(e) === 0, 'one set short → no bump');
+  console.assert(clock(90000) === '1:30' && clock(3723000) === '1:02:03', 'clock');
+  S = keep; console.log('self-check done');
+}
+</script>
+</body>
+</html>
