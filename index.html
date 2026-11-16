@@ -24,7 +24,7 @@
   --g900: #6f6f6f; --g1000: #171717;
   --green: #138a3e; --green-bg: #ebf8ef; --green-border: #b6e3c4;
   --blue: #0068d6; --blue-bg: #eef5ff;
-  --red: #d42a30;
+  --red: #d42a30; --flame: #f0640f;
   --shadow: 0 1px 1px rgba(0,0,0,.03), 0 2px 6px rgba(0,0,0,.04);
   --r: 12px;
   --sans: "Geist", -apple-system, system-ui, sans-serif;
@@ -40,7 +40,7 @@
     --g900: #a1a1a1; --g1000: #ededed;
     --green: #4ccf75; --green-bg: #0d2416; --green-border: #1d5a32;
     --blue: #52a8ff; --blue-bg: #0b1d33;
-    --red: #ff6166;
+    --red: #ff6166; --flame: #ff8a3d;
     --shadow: 0 1px 1px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.3);
   }
 }
@@ -229,12 +229,55 @@ dialog[open]::backdrop { background: rgba(0,0,0,.45); }
 @starting-style { dialog[open] { transform: translateY(100%); } dialog[open]::backdrop { background: rgba(0,0,0,0); } }
 dialog p { margin: 6px 0 20px; white-space: pre-line; }
 
+/* modern: streak, hero card, calendar, badges, pictograms */
+.card { border-radius: 18px; }
+.card .day.today b { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px var(--g1000); }
+.ic { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ic.lit { color: var(--flame); fill: var(--flame); }
+.ic.mid { width: 28px; height: 28px; }
+.ic.big { width: 88px; height: 88px; stroke-width: 1.2; color: var(--g500); }
+.ic.big.lit { color: var(--flame); }
+.streak { display: flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 14px 0 10px; border-radius: 99px; text-decoration: none;
+  background: var(--bg); border: 1px solid var(--g400); box-shadow: var(--shadow); font-weight: 600; font-size: 17px; color: var(--g900);
+  transition: transform .14s var(--ease-out); }
+.streak:active { transform: scale(.96); }
+.streak.lit { color: var(--g1000); }
+.goal { display: flex; gap: 4px; margin-top: 14px; }
+.goal i { flex: 1; height: 4px; border-radius: 4px; background: var(--g200); }
+.goal .on { background: var(--flame); }
+.hero { margin-top: 12px; padding: 20px; border-radius: 22px; background: var(--g1000); color: var(--bg); box-shadow: 0 10px 30px rgba(0,0,0,.14); }
+.hero p { color: inherit; opacity: .65; }
+.hero h3 { font-size: 26px; margin: 2px 0; }
+.inv { margin-top: 16px; background: var(--bg); color: var(--g1000); border-color: transparent; }
+.inv:active { background: var(--g400); }
+.huge { font-size: 88px; font-weight: 650; line-height: .95; letter-spacing: -.05em; }
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; justify-items: center; margin-top: 10px; }
+.cw { font-size: 12px; color: var(--g900); height: 24px; }
+.cd { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font: 500 14px var(--mono); color: var(--g900); text-decoration: none; }
+.cd.gym { background: var(--g1000); color: var(--bg); font-weight: 600; }
+.cd.hm { background: var(--green-bg); color: var(--green); }
+.cd.today { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px var(--g1000); }
+.badges { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.bdg { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; padding: 14px 6px; border-radius: 18px;
+  background: var(--bg); border: 1px solid var(--g400); color: var(--g900); font-size: 12px; }
+.bdg strong { font-size: 13px; }
+.bi { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 6px; background: var(--g100); color: var(--g500); }
+.bdg.got strong { color: var(--g1000); }
+.bdg.got .bi { background: var(--g1000); color: var(--bg); }
+.fb { fill: none; stroke: var(--g1000); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.fb circle { fill: var(--g1000); stroke: none; }
+.fp { fill: none; stroke: var(--g500); stroke-width: 2; stroke-linecap: round; }
+.confetti { position: fixed; inset: 0; z-index: 9; pointer-events: none; overflow: hidden; }
+.confetti i { position: absolute; top: -16px; width: 8px; height: 13px; border-radius: 2px; opacity: 0; animation: fall 1.6s linear forwards; }
+@keyframes fall { 0% { opacity: 1; transform: translateY(0) rotate(0); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(92vh) rotate(540deg); } }
+
 /* exercise visuals: start/end photo alternates; muscle map */
 .pics { position: relative; aspect-ratio: 3/2; margin-top: 16px; border-radius: var(--r); overflow: hidden; border: 1px solid var(--g400); background: var(--g100); }
-.pics img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.pics img + img { animation: flip 2.4s steps(1) infinite; }
+.pics > * { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: var(--g100); }
+.pics > * + * { animation: flip 2.4s steps(1) infinite; }
 @keyframes flip { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
-.thumb { width: 64px; height: 64px; border-radius: 10px; object-fit: cover; display: block; border: 1px solid var(--g400); background: var(--g100); }
+.thumb svg { width: 100%; height: 100%; display: block; }
+.thumb { width: 64px; height: 64px; flex: none; overflow: hidden; border-radius: 10px; object-fit: cover; display: block; border: 1px solid var(--g400); background: var(--g100); }
 .muscles { display: flex; justify-content: center; gap: 28px; }
 .muscles polygon { fill: var(--g200); }
 .muscles .p { fill: var(--red); }
@@ -247,7 +290,7 @@ dialog p { margin: 6px 0 20px; white-space: pre-line; }
   .setrow.new .mark, .setcard.new, .rest.in, .cele h1, .cele .grid2 .card { animation-name: fade; }
   .bar i { transition: none; }
   .pics { display: grid; grid-template-columns: 1fr 1fr; aspect-ratio: 3/1; }
-  .pics img { position: static; animation: none !important; }
+  .pics > * { position: static; animation: none !important; }
 }
 </style>
 </head>
@@ -265,6 +308,7 @@ dialog p { margin: 6px 0 20px; white-space: pre-line; }
   <div class="stack"><button class="primary big" id="dlgOk" value="ok"></button><button class="big" id="dlgNo" value="">Vazgeç</button></div>
 </form></dialog>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
+<label id="hap" aria-hidden="true" style="position:fixed;opacity:0;pointer-events:none"><input type="checkbox" switch tabindex="-1"></label>
 <script>
 // ---------- Exercise library ----------
 // ponytail: plans live in code; edit these lists to change the program (no plan editor UI).
@@ -318,7 +362,7 @@ const BACK = {"head":["506 0 460 9 409 55 404 128 451 200 557 200 591 136 596 47
 // ---------- State (localStorage) ----------
 const KEY = 'fitness-v1', DAY = 864e5;
 const norm = d => ({ active: d.active || null, history: d.history, notes: d.notes || {}, body: d.body || [],
-  settings: { rest: 90, step: 2.5, sound: true, lastBackup: 0, ...d.settings } });
+  settings: { rest: 90, step: 2.5, goal: 3, sound: true, lastBackup: 0, ...d.settings } });
 let S = load();
 function load() {
   try { const d = JSON.parse(localStorage.getItem(KEY)); if (d && Array.isArray(d.history)) return norm(d); } catch {}
@@ -366,7 +410,7 @@ function go(dir, fn) {
   const t = document.startViewTransition(fn);
   t.ready.catch(() => {}); t.finished.catch(() => {}); // a newer transition interrupting this one is fine
 }
-const depth = h => { const [, p, a] = h.split('/'); return p === 'ex' ? 2 : p === 'workout' || p === 'summary' || (p === 'history' && a) ? 1 : 0; };
+const depth = h => { const [, p, a] = h.split('/'); return p === 'ex' ? 2 : p === 'workout' || p === 'summary' || p === 'streak' || (p === 'history' && a) ? 1 : 0; };
 function ask(title, body = '', ok = 'Tamam', { danger, cancel = true } = {}) {
   const d = $('#dlg');
   $('#dlgT').textContent = title; $('#dlgB').textContent = body;
@@ -386,6 +430,8 @@ function beep() {
     o.connect(g).connect(ac.destination); o.start(t); o.stop(t + .2);
   });
 }
+// iOS has no vibrate(); toggling a native switch gives a light tap on recent iOS versions. Harmless elsewhere.
+const haptic = () => { try { $('#hap').click(); } catch {} };
 let lock; // keep the screen on during a workout (where the browser supports it)
 async function awake() {
   const want = S.active && location.hash === '#/workout' && !document.hidden;
@@ -403,7 +449,7 @@ let fresh = null, wasResting = false; // set just completed / rest bar already o
 function move(i) { const a = S.active, dir = i > a.cur ? 'push' : 'pop'; a.cur = i; a.hold = null; sel = null; save(); go(dir, () => { render(); scrollTo(0, 0); }); }
 function carryKg(e, i) { e.sets.slice(i + 1).forEach(s => { if (!s.done) s.kg = e.sets[i].kg; }); }
 function markDone(a, e, s) {
-  s.done = Date.now(); e.skipped = false; sel = null;
+  s.done = Date.now(); e.skipped = false; sel = null; haptic();
   if (!a.home) { a.restTotal = S.settings.rest * 1000; a.restEnd = Date.now() + a.restTotal; }
   // all sets of this exercise done → move on while resting
   const adv = e.sets.every(s => s.done) && a.cur < a.ex.length - 1;
@@ -475,7 +521,10 @@ const A = {
     // personal records: heavier than anything logged before (the first time doesn't count)
     const prs = ex.filter(e => { const old = Math.max(0, ...S.history.flatMap(h => h.ex.filter(x => x.id === e.id).map(x => topKg(x.sets)))); return old && topKg(e.sets) > old; }).map(e => e.id);
     const h = { id: a.id, plan: a.plan, name: a.name, home: a.home, start: a.start, end: Date.now(), ex, prs };
-    S.history.unshift(h); S.active = null; save();
+    const had = new Set(badges().filter(b => b.got).map(b => b.id));
+    S.history.unshift(h); S.active = null;
+    h.badges = badges().filter(b => b.got && !had.has(b.id)).map(b => b.id); // earned by this workout
+    celebrate = true; haptic(); save();
     location.hash = '#/summary/' + h.id;
   },
   async delHistory(id) {
@@ -493,6 +542,7 @@ const A = {
     S.settings.lastBackup = Date.now(); save(); render();
   },
   importData() { $('#importFile').click(); },
+  cal(d) { calM = Math.max(0, calM + +d); render(); },
   saveBody() { // one entry per day: saving again on the same day updates it
     const val = (id, lo, hi) => { const v = parseFloat($(id).value.trim().replace(',', '.')); return v >= lo && v <= hi ? Math.round(v * 10) / 10 : null; };
     const kg = val('#bKg', 20, 400), waist = val('#bWaist', 30, 250), t = new Date($('#bDate').value + 'T12:00').getTime();
@@ -538,47 +588,167 @@ function weekStrip() {
   }).join('')}</div>`;
 }
 
+const ICON = {
+  flame: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  bell: '<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>',
+  star: '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+  ton: '<path d="M6 9h12l2 11H4z"/><path d="M9 9a3 3 0 0 1 6 0"/>',
+  home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>',
+};
+const ic = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICON[n]}</svg>`;
+
+// Pictograms for the exercises without photos: [start, end]; h = head [x, y, r], l = body lines, p = props (floor, wall…)
+const FIG = {
+  'bird-dog': [
+    { h: [93, 33, 5.5], l: ['40,42 80,42 88,37', '80,42 80,68', '40,42 40,68 26,68'], p: ['8,71 112,71'] },
+    { h: [93, 33, 5.5], l: ['40,42 80,42 88,37', '80,42 80,68', '80,42 108,36', '40,42 40,68 26,68', '40,42 12,40'], p: ['8,71 112,71'] }],
+  'chin-tuck': [
+    { h: [66, 28, 11], l: ['40,80 44,64 68,64 72,80', '56,64 61,42', '76,29 81,30'], p: ['56,4 56,12', '56,48 56,58'] },
+    { h: [57, 28, 11], l: ['40,80 44,64 68,64 72,80', '56,64 57,42', '67,29 72,30'], p: ['56,4 56,12', '56,48 56,58', '102,29 84,29', '90,24 84,29 90,34'] }],
+  'wall-slide': [
+    { h: [60, 15, 6], l: ['60,24 60,52', '60,52 52,76', '60,52 68,76', '60,30 46,38 44,22', '60,30 74,38 76,22'], p: ['20,78 100,78'] },
+    { h: [60, 15, 6], l: ['60,24 60,52', '60,52 52,76', '60,52 68,76', '60,30 49,24 44,6', '60,30 71,24 76,6'], p: ['20,78 100,78'] }],
+  'doorway-stretch': [
+    { h: [54, 15, 6], l: ['54,23 54,50', '54,50 50,77', '54,50 58,77', '54,28 66,28 66,14'], p: ['66,3 66,78', '10,78 110,78'] },
+    { h: [73, 17, 6], l: ['71,25 68,50', '68,50 78,63 78,77', '68,50 56,77', '71,29 66,27 66,14'], p: ['66,3 66,78', '10,78 110,78'] }],
+};
+const figSvg = (f, label) => `<svg viewBox="0 0 120 80" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"'}><g class="fp">${
+  (f.p || []).map(p => `<polyline points="${p}"/>`).join('')}</g><g class="fb">${f.l.map(p => `<polyline points="${p}"/>`).join('')}<circle cx="${f.h[0]}" cy="${f.h[1]}" r="${f.h[2]}"/></g></svg>`;
+const thumb = (id, size = 64) => PICS.has(id)
+  ? `<img class="thumb" style="width:${size}px;height:${size}px" src="img/${id}-1.jpg" alt="" width="${size}" height="${size}" loading="lazy">`
+  : `<span class="thumb" style="width:${size}px;height:${size}px">${FIG[id] ? figSvg(FIG[id][1]) : ''}</span>`;
+
+// Week streak: consecutive weeks (Mon–Sun) that reached the weekly goal. The running week only counts once it's reached.
+function streak(H = S.history) {
+  const goal = S.settings.goal, cnt = {};
+  H.filter(h => !h.home).forEach(h => { const k = monday(h.end).getTime(); cnt[k] = (cnt[k] || 0) + 1; });
+  const ok = k => (cnt[k] || 0) >= goal, back = d => { const x = new Date(d); x.setDate(x.getDate() - 7); return x; };
+  let w = monday(), cur = 0;
+  if (!ok(w.getTime())) w = back(w);
+  while (ok(w.getTime())) { cur++; w = back(w); }
+  let best = 0, run = 0, last = null;
+  Object.keys(cnt).map(Number).sort((a, b) => a - b).forEach(k => {
+    if (!ok(k)) { run = 0; last = null; return; }
+    run = last != null && Math.round((k - last) / (7 * DAY)) === 1 ? run + 1 : 1; last = k; best = Math.max(best, run);
+  });
+  return { cur, best, goal, week: cnt[monday().getTime()] || 0 };
+}
+const volume = h => h.ex.reduce((n, e) => n + e.sets.reduce((m, s) => m + (parseFloat(s.kg) || 0) * (parseFloat(s.reps) || 0), 0), 0);
+// [id, name, how to earn, icon, counter, needed] — all derived from history, nothing stored
+const BADGES = [
+  ['n1', 'İlk Adım', 'İlk antrenman', 'bell', 'n', 1], ['n5', 'Isındın', '5 antrenman', 'bell', 'n', 5],
+  ['n10', 'Çift Hane', '10 antrenman', 'bell', 'n', 10], ['n25', 'Müdavim', '25 antrenman', 'bell', 'n', 25],
+  ['n50', 'Yarım Yüz', '50 antrenman', 'bell', 'n', 50], ['n100', 'Yüzler Kulübü', '100 antrenman', 'bell', 'n', 100],
+  ['s2', 'İki Hafta', '2 hafta seri', 'flame', 's', 2], ['s4', 'Bir Ay', '4 hafta seri', 'flame', 's', 4],
+  ['s8', 'İki Ay', '8 hafta seri', 'flame', 's', 8], ['s12', 'Çeyrek Yıl', '12 hafta seri', 'flame', 's', 12],
+  ['p1', 'İlk Rekor', 'Bir rekor kır', 'star', 'pr', 1], ['p10', 'Rekortmen', '10 rekor', 'star', 'pr', 10],
+  ['t10', '10 Ton', '10.000 kg kaldır', 'ton', 'vol', 10000], ['t100', '100 Ton', '100.000 kg kaldır', 'ton', 'vol', 100000],
+  ['h5', 'Ev Disiplini', '5 ev rutini', 'home', 'home', 5],
+];
+function badges(H = S.history) {
+  const v = { n: H.filter(h => !h.home).length, s: streak(H).best, pr: H.reduce((n, h) => n + (h.prs?.length || 0), 0),
+    vol: Math.round(H.reduce((n, h) => n + volume(h), 0)), home: H.filter(h => h.home).length };
+  return BADGES.map(([id, name, desc, icon, k, need]) => ({ id, name, desc, icon, cur: Math.min(v[k], need), need, got: v[k] >= need }));
+}
+const badgeHtml = b => `<div class="bdg ${b.got ? 'got' : ''}"><span class="bi">${ic(b.icon)}</span><strong>${b.name}</strong>
+  <span>${b.got ? b.desc : `${b.cur.toLocaleString('tr-TR')} / ${b.need.toLocaleString('tr-TR')}`}</span></div>`;
+
+let calM = 0, celebrate = false; // calendar: months back from now · confetti: once, right after finishing
+function calendar() {
+  const f = new Date(); f.setHours(0, 0, 0, 0); f.setDate(1); f.setMonth(f.getMonth() - calM);
+  const n = new Date(f.getFullYear(), f.getMonth() + 1, 0).getDate(), lead = (f.getDay() + 6) % 7;
+  const cell = i => {
+    const d = new Date(f); d.setDate(i);
+    const g = gymOn(d), hm = !g && S.history.some(h => h.home && sameDay(h.end, d)), td = sameDay(d, Date.now()) ? 'today' : '';
+    return g ? `<a class="cd gym ${td}" href="#/history/${g.id}" aria-label="${i}: ${esc(g.name)}">${i}</a>`
+             : `<span class="cd ${hm ? 'hm' : ''} ${td}"${hm ? ` aria-label="${i}: ev rutini"` : ''}>${i}</span>`;
+  };
+  return `<div class="card">
+    <div class="row between"><button class="ghost x" data-act="cal" data-arg="1" aria-label="Önceki ay">‹</button>
+      <strong>${esc(f.toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' }))}</strong>
+      <button class="ghost x" data-act="cal" data-arg="-1" aria-label="Sonraki ay" ${calM ? '' : 'disabled style="visibility:hidden"'}>›</button></div>
+    <div class="cal">${['P', 'S', 'Ç', 'P', 'C', 'C', 'P'].map(x => `<span class="cw">${x}</span>`).join('')}${'<span></span>'.repeat(lead)}${Array.from({ length: n }, (_, i) => cell(i + 1)).join('')}</div>
+    <p class="small" style="text-align:center;margin-top:12px"><span class="dot" style="background:var(--g1000);border-radius:50%"></span>Salon<span class="dot" style="background:var(--green);border-radius:50%;margin-left:16px"></span>Ev rutini</p>
+  </div>`;
+}
+function confetti() {
+  if (calm.matches) return '';
+  const c = ['var(--flame)', 'var(--green)', 'var(--blue)', 'var(--g1000)'];
+  return `<div class="confetti" aria-hidden="true">${Array.from({ length: 30 }, (_, i) =>
+    `<i style="left:${(i * 37) % 100}%;background:${c[i % 4]};animation-delay:${(i % 7) * 70}ms;animation-duration:${1500 + (i % 5) * 200}ms"></i>`).join('')}</div>`;
+}
+
+function streakPage() {
+  const s = streak(), B = badges(), left = Math.max(0, s.goal - s.week);
+  return `
+  <a class="btn ghost" href="#/" style="padding-left:0;margin-top:-8px;align-self:flex-start">‹ Ana Sayfa</a>
+  <div class="row between" style="margin-top:8px">
+    <div><div class="huge num">${s.cur}</div><h3>hafta seri</h3></div>
+    ${ic('flame', 'big ' + (s.cur ? 'lit' : ''))}
+  </div>
+  <p style="margin-top:10px">${s.week >= s.goal ? 'Bu haftanın hedefi tamam, seri güvende.'
+    : `${s.cur ? 'Seriyi korumak' : 'Seriyi başlatmak'} için bu hafta ${left} antrenman daha.`}</p>
+  <div class="grid2" style="margin-top:16px;grid-template-columns:repeat(3,1fr)">
+    <div class="card"><p class="small">Bu hafta</p><div class="stat num">${s.week}<span class="small muted">/${s.goal}</span></div></div>
+    <div class="card"><p class="small">En uzun</p><div class="stat num">${s.best}<span class="small muted"> hf</span></div></div>
+    <div class="card"><p class="small">Toplam</p><div class="stat num">${S.history.filter(h => !h.home).length}</div></div>
+  </div>
+  <p class="small" style="margin-top:10px">Haftada ${s.goal} salon antrenmanı yaptığın her hafta seriye eklenir. Hedefi Ayarlar’dan değiştirebilirsin.</p>
+  <h2>Takvim</h2>
+  ${calendar()}
+  <h2>Rozetler · ${B.filter(b => b.got).length}/${B.length}</h2>
+  <div class="badges">${B.map(badgeHtml).join('')}</div>`;
+}
+
 function home() {
-  const a = S.active, last = S.history.find(h => !h.home);
-  const thisWeek = S.history.filter(h => !h.home && h.end >= monday()).length;
-  const k = pick || suggested(), p = PLANS[k], doneToday = gymOn(new Date());
-  const lastSame = S.history.find(h => h.plan === k);
+  const a = S.active, last = S.history.find(h => !h.home), st = streak();
+  const k = pick || suggested(), p = PLANS[k], doneToday = gymOn(new Date()), lastSame = S.history.find(h => h.plan === k);
   const stale = !S.settings.lastBackup || Date.now() - S.settings.lastBackup > 14 * DAY;
+  const hr = new Date().getHours(), hello = hr < 5 ? 'İyi geceler' : hr < 12 ? 'Günaydın' : hr < 18 ? 'İyi günler' : 'İyi akşamlar';
   const sub = doneToday && !pick ? `Bugün ${esc(doneToday.name)} tamamlandı ✓`
     : `${k === suggested() ? 'Bugün için önerilen' : 'Elle seçildi'}${k === 'H' ? ` · Sıradaki salon günü: ${nextGym()}` : ''}`;
+  const body = ['kg', 'waist'].map(f => { const x = S.body.find(b => b[f] != null); return x ? `${nf(x[f])} ${f === 'kg' ? 'kg' : 'cm'}` : ''; }).filter(Boolean);
   return `
-  <p class="small">${esc(fmtDate(Date.now()))}</p>
-  <h1>${a ? 'Antrenman sürüyor' : esc(p.name)}</h1>
-  ${a ? '' : `<p class="small" style="margin-top:4px">${sub}</p>`}
-  ${weekStrip()}
+  <div class="row between">
+    <div><p class="small">${esc(fmtDate(Date.now()))}</p><h1>${hello}</h1></div>
+    <a class="streak ${st.cur ? 'lit' : ''}" href="#/streak" aria-label="Seri: ${st.cur} hafta. Seri ve rozetleri aç">${ic('flame', st.cur ? 'lit' : '')}<span class="num">${st.cur}</span></a>
+  </div>
+  <a class="card" href="#/streak" style="display:block;margin-top:16px;text-decoration:none">
+    <div class="row between"><strong>Bu hafta</strong><span class="small muted num">${st.week}/${st.goal} antrenman</span></div>
+    ${weekStrip()}
+    <div class="goal">${Array.from({ length: st.goal }, (_, i) => `<i class="${i < st.week ? 'on' : ''}"></i>`).join('')}</div>
+  </a>
   ${a ? `
-    <div class="card stack" style="margin-top:18px">
-      <div class="row between"><strong>${esc(a.name)}</strong><span class="badge">${doneCount(a)}/${a.ex.length} hareket</span></div>
-      <p class="small">${fmtTime(a.start)}’de başladı · <span class="num">${clock(Date.now() - a.start)}</span></p>
-      <button class="primary big" data-act="resume">Antrenmana Devam Et</button>
-      <button class="ghost danger full" data-act="discard">Antrenmanı Sil…</button>
+    <div class="hero">
+      <p class="small">Devam eden antrenman</p>
+      <h3>${esc(a.name)}</h3>
+      <p class="small">${doneCount(a)}/${a.ex.length} hareket · ${fmtTime(a.start)}’de başladı</p>
+      <button class="big inv" data-act="resume">Antrenmana Devam Et</button>
+      <button class="ghost full" style="color:inherit;opacity:.7;margin-top:4px" data-act="discard">Antrenmanı Sil…</button>
     </div>` : `
-    <div class="seg" style="margin-top:18px" role="group" aria-label="Antrenman seç">
-      ${['A','B','H'].map(x => `<button data-act="pick" data-arg="${x}" aria-pressed="${x === k}">${x === 'H' ? 'Ev' : x}</button>`).join('')}
+    <div class="seg" style="margin-top:12px" role="group" aria-label="Antrenman seç">
+      ${['A', 'B', 'H'].map(x => `<button data-act="pick" data-arg="${x}" aria-pressed="${x === k}">${x === 'H' ? 'Ev' : x}</button>`).join('')}
     </div>
-    <button class="primary big" style="margin-top:10px" data-act="start" data-arg="${k}">Antrenmana Başla</button>
-    <p class="small" style="margin-top:8px;text-align:center">${p.items.length} hareket${lastSame ? ` · geçen sefer ${mins(lastSame.end - lastSame.start)}` : ''}</p>
+    <div class="hero">
+      <p class="small">${sub}</p>
+      <h3>${esc(p.name)}</h3>
+      <p class="small">${p.items.length} hareket${lastSame ? ` · geçen sefer ${mins(lastSame.end - lastSame.start)}` : ''}</p>
+      <button class="big inv" data-act="start" data-arg="${k}">Antrenmana Başla</button>
+    </div>
     <div class="card" style="margin-top:12px">
       <ul class="list">${p.items.map(([id, sets, reps, unit = '', max]) => { const kg = p.home ? 0 : topKg(lastSets(id)); return `
-        <li><a href="#/ex/${id}">${esc(EX[id].n)}</a><span class="muted num small" style="white-space:nowrap">${target({ sets, reps, unit, max })}${kg ? ` · ${nf(kg)} kg` : ''}</span></li>`; }).join('')}
+        <li style="align-items:center"><a class="row" href="#/ex/${id}" style="gap:12px;flex:1;min-width:0">${thumb(id, 44)}<span>${esc(EX[id].n)}</span></a>
+        <span class="muted num small" style="white-space:nowrap;text-align:right">${target({ sets, reps, unit, max })}${kg ? `<br>${nf(kg)} kg` : ''}</span></li>`; }).join('')}
       </ul>
     </div>`}
-  <h2>Özet</h2>
-  <div class="grid2">
-    <div class="card"><p class="small">Bu hafta</p><div class="stat num">${thisWeek}<span class="muted small"> / 3</span></div></div>
-    <div class="card"><p class="small">Son antrenman</p>
+  <div class="grid2" style="margin-top:12px">
+    <a class="card" href="#/history" style="text-decoration:none"><p class="small">Son antrenman</p>
       ${last ? `<div class="stat" style="font-size:17px">${esc(fmtDate(last.end, { day: 'numeric', month: 'short' }))}</div><p class="small">${esc(last.name)} · ${mins(last.end - last.start)}</p>`
-             : `<div class="stat" style="font-size:17px">—</div><p class="small">Henüz yok</p>`}
-    </div>
+             : `<div class="stat" style="font-size:17px">—</div><p class="small">Henüz yok</p>`}</a>
+    <a class="card" href="#/body" style="text-decoration:none"><p class="small">Ölçüler</p>
+      ${body.length ? `<div class="stat num" style="font-size:17px">${body[0]}</div><p class="small num">${body[1] || 'Bel ölçüsü yok'}</p>`
+                    : `<div class="stat" style="font-size:17px">—</div><p class="small">Kilo ve bel ekle</p>`}</a>
   </div>
-  <a class="card row between" href="#/body" style="margin-top:10px;text-decoration:none">
-    ${S.body.length ? `<span class="num">${['kg', 'waist'].map(k => { const x = S.body.find(b => b[k] != null); return x ? `${k === 'kg' ? 'Kilo' : 'Bel'} ${nf(x[k])} ${k === 'kg' ? 'kg' : 'cm'}` : ''; }).filter(Boolean).join(' · ')}</span>` : '<span>Kilo ve bel ölçünü ekle</span>'}
-    <span class="muted" aria-hidden="true">›</span></a>
   ${stale && S.history.length ? `<div class="card row between" style="margin-top:10px"><p class="small">2 haftadır yedek alınmadı.</p><button data-act="exportData">Yedekle</button></div>` : ''}`;
 }
 
@@ -610,7 +780,7 @@ function workout() {
     return `<button class="${x.skipped ? 'k' : d && d === x.sets.length ? 'd' : d ? 'p' : ''} ${i === a.cur ? 'c' : ''}" data-act="go" data-arg="${i}" ${i === a.cur ? 'aria-current="step"' : ''} aria-label="${i + 1}. ${esc(x.name)}: ${x.skipped ? 'atlandı' : `${d}/${x.sets.length} set`}"><i></i></button>`; }).join('')}
   </div>
   <div class="row" style="align-items:flex-start;gap:12px">
-    ${PICS.has(e.id) ? `<a href="#/ex/${e.id}" aria-label="${esc(e.name)} detayları"><img class="thumb" src="img/${e.id}-1.jpg" alt="" width="64" height="64"></a>` : ''}
+    <a href="#/ex/${e.id}" aria-label="${esc(e.name)} detayları">${thumb(e.id)}</a>
     <div style="flex:1">
       <h3><a href="#/ex/${e.id}" style="text-decoration:none">${esc(e.name)} <span class="muted" aria-hidden="true">›</span></a></h3>
       <p class="small" style="margin-top:2px">Hedef <span class="num">${target(t)}</span>${note ? ` · ${esc(note)}` : ''}</p>
@@ -673,9 +843,15 @@ function historyDetail(id, summary) {
   const vol = h.ex.reduce((n, e) => n + e.sets.reduce((m, s) => m + (parseFloat(s.kg) || 0) * (parseFloat(s.reps) || 0), 0), 0);
   return `
   <div class="body ${summary ? 'cele' : ''}">
+  ${summary && celebrate ? confetti() : ''}
   ${summary ? '' : `<a class="btn ghost" href="#/history" style="padding-left:0;margin-top:-8px">‹ Geçmiş</a>`}
   <h1 style="margin-top:${summary ? 24 : 4}px">${summary ? 'Antrenman tamam ✓' : esc(h.name)}</h1>
   <p class="small" style="margin-top:4px">${summary ? esc(h.name) + ' · ' : ''}${esc(fmtDate(h.end))} · ${fmtTime(h.start)}–${fmtTime(h.end)}</p>
+  ${summary && !h.home ? (() => { const st = streak(), n = S.history.filter(x => !x.home).length; return `
+  <a class="card row" href="#/streak" style="margin-top:14px;gap:12px;text-decoration:none">${ic('flame', 'mid ' + (st.week >= st.goal ? 'lit' : ''))}
+    <div style="flex:1"><strong>${st.week >= st.goal ? `Haftalık hedef tamam · ${st.cur} hafta seri` : `Bu hafta ${st.week}/${st.goal}`}</strong>
+    <p class="small">${n}. antrenmanın${st.week < st.goal ? ` · seri için ${st.goal - st.week} antrenman daha` : ''}</p></div><span class="muted" aria-hidden="true">›</span></a>`; })() : ''}
+  ${h.badges?.length ? `<p class="small" style="margin:14px 0 8px">Yeni rozet kazandın</p><div class="badges">${badges().filter(b => h.badges.includes(b.id)).map(badgeHtml).join('')}</div>` : ''}
   <div class="grid2" style="margin-top:16px;grid-template-columns:repeat(3,1fr)">
     <div class="card"><p class="small">Süre</p><div class="stat num">${Math.max(1, Math.round((h.end - h.start) / 60000))}<span class="small muted"> dk</span></div></div>
     <div class="card"><p class="small">Set</p><div class="stat num">${sets}</div></div>
@@ -745,8 +921,10 @@ function exercise(id) {
   <button class="ghost" style="padding-left:0;margin-top:-8px;align-self:flex-start" onclick="history.back()">‹ Geri</button>
   <h1 style="margin-top:4px">${esc(x.n)}</h1>
   <p class="small" style="margin-top:4px">${esc(x.m)}</p>
-  ${PICS.has(id) ? `<div class="pics"><img src="img/${id}-0.jpg" alt="${esc(x.n)}: başlangıç pozisyonu" width="600" height="400"><img src="img/${id}-1.jpg" alt="${esc(x.n)}: bitiş pozisyonu" width="600" height="400"></div>` : ''}
-  <div class="card stack" style="margin-top:${PICS.has(id) ? 10 : 16}px">
+  <div class="pics">${PICS.has(id)
+    ? `<img src="img/${id}-0.jpg" alt="${esc(x.n)}: başlangıç pozisyonu" width="600" height="400"><img src="img/${id}-1.jpg" alt="${esc(x.n)}: bitiş pozisyonu" width="600" height="400">`
+    : FIG[id] ? figSvg(FIG[id][0], esc(x.n) + ': başlangıç pozisyonu') + figSvg(FIG[id][1], esc(x.n) + ': bitiş pozisyonu') : ''}</div>
+  <div class="card stack" style="margin-top:10px">
     <div><strong>Nasıl yapılır</strong><p>${esc(x.how)}</p></div>
     <div><strong>Dikkat</strong><p>${esc(x.tip)}</p></div>
   </div>
@@ -771,6 +949,8 @@ function settings() {
   <div class="card stack">
     <div class="row between"><label for="rest">Dinlenme süresi (sn)</label>
       <input id="rest" class="field" inputmode="numeric" value="${st.rest}"></div>
+    <div class="row between"><label for="goal">Haftalık hedef<p class="small">Seri için haftada kaç salon antrenmanı</p></label>
+      <input id="goal" class="field" inputmode="numeric" value="${st.goal}"></div>
     <div class="row between"><label for="step">Ağırlık adımı (kg)<p class="small">+ ve − düğmelerinin artışı</p></label>
       <input id="step" class="field" inputmode="decimal" value="${nf(st.step)}"></div>
     <label class="row between" style="min-height:44px">Süre bitince sesli uyarı
@@ -798,6 +978,7 @@ function render() {
   else if (page === 'history') html = historyList();
   else if (page === 'ex') { html = exercise(arg); nav = '-'; }
   else if (page === 'body') html = body();
+  else if (page === 'streak') { html = streakPage(); nav = '-'; }
   else if (page === 'settings') html = settings();
   else { html = home(); nav = ''; }
   const bare = (page === 'workout' && S.active) || page === 'summary';
@@ -808,7 +989,7 @@ function render() {
   const tab = ['', 'history', 'body', 'settings'].indexOf(nav);
   $('#nav').classList.toggle('none', tab < 0);
   if (tab >= 0) $('.ind').style.transform = `translateX(${tab * 100}%)`;
-  fresh = null;
+  fresh = null; celebrate = false;
   awake();
 }
 
@@ -827,6 +1008,7 @@ document.addEventListener('click', ev => {
 document.addEventListener('change', ev => {
   const t = ev.target, num = () => parseFloat(t.value.trim().replace(',', '.'));
   if (t.id === 'rest') { const v = Math.round(num()); if (v >= 5 && v <= 900) S.settings.rest = v; t.value = S.settings.rest; return save(); }
+  if (t.id === 'goal') { const v = Math.round(num()); if (v >= 1 && v <= 7) S.settings.goal = v; t.value = S.settings.goal; return save(); }
   if (t.id === 'step') { const v = num(); if (v > 0 && v <= 50) S.settings.step = v; t.value = nf(S.settings.step); return save(); }
   if (t.id === 'sound') { S.settings.sound = t.checked; return save(); }
   if (t.id === 'note') { const v = t.value.trim(); if (v) S.notes[t.dataset.id] = v; else delete S.notes[t.dataset.id]; return save(); }
@@ -856,6 +1038,15 @@ function tick() {
     else if ($('#rest')) { $('#rest').textContent = clock(left); $('#restbar').style.transform = `scaleX(${left / (a.restTotal || S.settings.rest * 1000)})`; }
   }
 }
+// Swipe left/right on the workout screen to change exercise
+let tx = null;
+addEventListener('touchstart', ev => { const p = ev.touches[0]; tx = ev.target.closest('input, .step, dialog, .dock') ? null : [p.clientX, p.clientY, Date.now()]; }, { passive: true });
+addEventListener('touchend', ev => {
+  if (!tx || !S.active || location.hash !== '#/workout') return;
+  const p = ev.changedTouches[0], dx = p.clientX - tx[0], dy = p.clientY - tx[1];
+  if (Math.abs(dx) > 70 && Math.abs(dy) < 40 && Date.now() - tx[2] < 600) dx < 0 ? A.next() : A.prev();
+  tx = null;
+}, { passive: true });
 setInterval(tick, 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden && !document.activeElement?.dataset?.f) { tick(); render(); } });
 addEventListener('hashchange', ev => {
@@ -878,6 +1069,10 @@ if (location.search === '?test') {
   S.history[1].ex[0].sets[1].reps = 11;
   console.assert(bump(e) === 0, 'one set short → no bump');
   console.assert(clock(90000) === '1:30' && clock(3723000) === '1:02:03', 'clock');
+  const wk = n => { const d = monday(); d.setDate(d.getDate() - 7 * n); d.setHours(12); return d.getTime(); };
+  S.history = [0, 0, 0, 1, 1, 1, 3, 3, 3].map(n => ({ plan: 'A', end: wk(n), ex: [] }));
+  const st = streak(); console.assert(st.cur === 2 && st.best === 2 && st.week === 3, 'streak: two full weeks, gap before', st);
+  S.history = S.history.slice(1); console.assert(streak().cur === 1, 'running week below goal: streak carries from last week');
   S = keep; console.log('self-check done');
 }
 </script>
