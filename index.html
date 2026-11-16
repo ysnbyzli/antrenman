@@ -267,6 +267,10 @@ dialog p { margin: 6px 0 20px; white-space: pre-line; }
 .fb { fill: none; stroke: var(--g1000); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
 .fb circle { fill: var(--g1000); stroke: none; }
 .fp { fill: none; stroke: var(--g500); stroke-width: 2; stroke-linecap: round; }
+.bars { display: flex; align-items: flex-end; gap: 6px; height: 116px; }
+.bars div { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; font-size: 11px; color: var(--g900); }
+.bars i { width: 100%; max-width: 28px; border-radius: 6px; background: var(--g200); }
+.bars .on { background: var(--flame); }
 .confetti { position: fixed; inset: 0; z-index: 9; pointer-events: none; overflow: hidden; }
 .confetti i { position: absolute; top: -16px; width: 8px; height: 13px; border-radius: 2px; opacity: 0; animation: fall 1.6s linear forwards; }
 @keyframes fall { 0% { opacity: 1; transform: translateY(0) rotate(0); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(92vh) rotate(540deg); } }
@@ -542,6 +546,7 @@ const A = {
     S.settings.lastBackup = Date.now(); save(); render();
   },
   importData() { $('#importFile').click(); },
+  hideInstall() { S.settings.hideInstall = true; save(); render(); },
   cal(d) { calM = Math.max(0, calM + +d); render(); },
   saveBody() { // one entry per day: saving again on the same day updates it
     const val = (id, lo, hi) => { const v = parseFloat($(id).value.trim().replace(',', '.')); return v >= lo && v <= hi ? Math.round(v * 10) / 10 : null; };
@@ -678,6 +683,16 @@ function confetti() {
     `<i style="left:${(i * 37) % 100}%;background:${c[i % 4]};animation-delay:${(i % 7) * 70}ms;animation-duration:${1500 + (i % 5) * 200}ms"></i>`).join('')}</div>`;
 }
 
+function weeksChart() { // gym workouts per week, last 8 weeks
+  const goal = S.settings.goal, w = Array.from({ length: 8 }, (_, i) => {
+    const d = monday(); d.setDate(d.getDate() - 7 * (7 - i));
+    return [d, S.history.filter(h => !h.home && monday(h.end).getTime() === d.getTime()).length];
+  }), mx = Math.max(goal, ...w.map(x => x[1]));
+  return `<div class="card"><div class="bars" role="img" aria-label="Son 8 haftanın antrenman sayıları: ${w.map(x => x[1]).join(', ')}">${w.map(([d, n]) =>
+    `<div><span class="num">${n || ''}</span><i class="${n >= goal ? 'on' : ''}" style="height:${Math.max(4, n / mx * 72)}px"></i><span class="num">${d.getDate()}.${d.getMonth() + 1}</span></div>`).join('')}</div>
+    <p class="small" style="text-align:center;margin-top:10px"><span class="dot" style="background:var(--flame)"></span>Hedefe ulaşılan hafta</p></div>`;
+}
+
 function streakPage() {
   const s = streak(), B = badges(), left = Math.max(0, s.goal - s.week);
   return `
@@ -694,6 +709,8 @@ function streakPage() {
     <div class="card"><p class="small">Toplam</p><div class="stat num">${S.history.filter(h => !h.home).length}</div></div>
   </div>
   <p class="small" style="margin-top:10px">Haftada ${s.goal} salon antrenmanı yaptığın her hafta seriye eklenir. Hedefi Ayarlar’dan değiştirebilirsin.</p>
+  <h2>Son 8 hafta</h2>
+  ${weeksChart()}
   <h2>Takvim</h2>
   ${calendar()}
   <h2>Rozetler · ${B.filter(b => b.got).length}/${B.length}</h2>
@@ -707,13 +724,16 @@ function home() {
   const hr = new Date().getHours(), hello = hr < 5 ? 'İyi geceler' : hr < 12 ? 'Günaydın' : hr < 18 ? 'İyi günler' : 'İyi akşamlar';
   const sub = doneToday && !pick ? `Bugün ${esc(doneToday.name)} tamamlandı ✓`
     : `${k === suggested() ? 'Bugün için önerilen' : 'Elle seçildi'}${k === 'H' ? ` · Sıradaki salon günü: ${nextGym()}` : ''}`;
+  const needInstall = /iphone|ipad|ipod/i.test(navigator.userAgent) && !navigator.standalone && !S.settings.hideInstall;
   const body = ['kg', 'waist'].map(f => { const x = S.body.find(b => b[f] != null); return x ? `${nf(x[f])} ${f === 'kg' ? 'kg' : 'cm'}` : ''; }).filter(Boolean);
   return `
   <div class="row between">
-    <div><p class="small">${esc(fmtDate(Date.now()))}</p><h1>${hello}</h1></div>
+    <div><p class="small">${esc(fmtDate(Date.now()))}</p><h1 style="margin-top:2px">${hello}</h1></div>
     <a class="streak ${st.cur ? 'lit' : ''}" href="#/streak" aria-label="Seri: ${st.cur} hafta. Seri ve rozetleri aç">${ic('flame', st.cur ? 'lit' : '')}<span class="num">${st.cur}</span></a>
   </div>
-  <a class="card" href="#/streak" style="display:block;margin-top:16px;text-decoration:none">
+  ${needInstall ? `<div class="card" style="margin-top:16px"><div class="row between"><strong>Ana ekrana ekle</strong><button class="ghost x" data-act="hideInstall" aria-label="Kapat">×</button></div>
+    <p class="small">Safari’de Paylaş düğmesine dokunup “Ana Ekrana Ekle”yi seç. Uygulama tam ekran açılır ve kayıtların silinme riski kalkar.</p></div>` : ''}
+  <a class="card" href="#/streak" style="display:block;margin-top:${needInstall ? 10 : 16}px;text-decoration:none">
     <div class="row between"><strong>Bu hafta</strong><span class="small muted num">${st.week}/${st.goal} antrenman</span></div>
     ${weekStrip()}
     <div class="goal">${Array.from({ length: st.goal }, (_, i) => `<i class="${i < st.week ? 'on' : ''}"></i>`).join('')}</div>
