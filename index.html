@@ -45,6 +45,7 @@
   }
 }
 * { box-sizing: border-box; margin: 0; }
+[hidden] { display: none !important; }
 html { background: var(--bg2); -webkit-text-size-adjust: 100%; }
 body { font: 16px/1.45 var(--sans); color: var(--g1000); background: var(--bg2); -webkit-font-smoothing: antialiased;
   user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
@@ -258,12 +259,53 @@ dialog p { margin: 6px 0 20px; white-space: pre-line; }
 .cd.hm { background: var(--green-bg); color: var(--green); }
 .cd.today { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px var(--g1000); }
 .badges { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.bdg { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; padding: 14px 6px; border-radius: 18px;
-  background: var(--bg); border: 1px solid var(--g400); color: var(--g900); font-size: 12px; }
-.bdg strong { font-size: 13px; }
-.bi { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 6px; background: var(--g100); color: var(--g500); }
+.bdg { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center; gap: 3px;
+  min-height: 0; padding: 10px 2px; border: 0; background: none; border-radius: 16px; color: var(--g900); font-size: 12px; font-weight: 400; }
+.bdg:active { background: var(--g100); }
+.bdg strong { font-size: 13px; font-weight: 600; margin-top: 6px; color: var(--g900); }
 .bdg.got strong { color: var(--g1000); }
-.bdg.got .bi { background: var(--g1000); color: var(--bg); }
+.medal { display: block; overflow: visible; }
+.medal:not(.off) { filter: drop-shadow(0 4px 8px rgba(0,0,0,.2)); }
+.ml { fill: var(--g100); stroke: var(--g400); stroke-width: 2; }
+.mt { font-family: var(--sans); font-weight: 700; text-anchor: middle; letter-spacing: -.03em; }
+.mini { width: 44px; height: 3px; border-radius: 3px; background: var(--g200); overflow: hidden; margin-top: 2px; }
+.mini i { display: block; height: 100%; background: var(--g900); border-radius: 3px; }
+.tag { position: absolute; top: 2px; right: 6px; z-index: 1; padding: 1px 7px; border-radius: 99px; background: var(--flame); color: #fff; font-size: 11px; font-weight: 600; }
+#dlgX { display: grid; place-items: center; }
+#dlgX:not(:empty) { margin: 4px 0 16px; }
+#dlgX:not(:empty) ~ h3, #dlgX:not(:empty) ~ p { text-align: center; }
+.cele .bdg { animation: pop .3s var(--ease-out) both; animation-delay: .3s; }
+
+/* workout screen */
+.top { margin: -4px 0 8px; }
+.round { width: 44px; height: 44px; padding: 0; border-radius: 50%; font-size: 22px; }
+.timer { font: 600 28px/1.1 var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.pillbtn { border-radius: 99px; min-height: 40px; padding: 0 18px; background: var(--g1000); color: var(--bg); border-color: var(--g1000); }
+.pillbtn:active { background: var(--g900); }
+.strip { position: relative; display: flex; gap: 12px; overflow-x: auto; margin: 0 -16px 10px; padding: 6px 16px 10px; scrollbar-width: none; }
+.strip::-webkit-scrollbar { display: none; }
+.st { position: relative; flex: none; min-height: 0; padding: 0; border: 0; background: none; border-radius: 14px; }
+.st:active { background: none; }
+.st .thumb { border-radius: 14px; opacity: .5; }
+.st.c .thumb { opacity: 1; box-shadow: 0 0 0 2px var(--bg2), 0 0 0 4px var(--g1000); }
+.st.k .thumb { opacity: .25; }
+.st[data-n]::after { content: attr(data-n); position: absolute; right: -6px; bottom: -6px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px;
+  display: grid; place-items: center; font: 600 11px var(--mono); background: var(--g1000); color: var(--bg); border: 2px solid var(--bg2); }
+.st.d::after { background: var(--green); }
+.setrow { display: grid; grid-template-columns: 24px 1fr 1fr 24px; gap: 8px; align-items: center; padding: 6px 12px; min-height: 56px; border-radius: 14px; }
+.setrow.one { grid-template-columns: 24px 1fr 24px; }
+.setrow .sn { color: var(--g900); text-align: left; }
+.pill { height: 40px; border-radius: 10px; background: var(--g100); display: flex; align-items: baseline; justify-content: center; gap: 4px; line-height: 40px; color: var(--g1000); }
+.pill small { font: 400 12px var(--sans); color: var(--g900); }
+.setrow.done .pill { background: transparent; }
+.setcard { border-radius: 16px; }
+.gap { text-align: center; font-size: 12px; color: var(--g900); margin: 4px 0 -4px !important; }
+.nextup { width: 100%; margin-top: 20px; justify-content: flex-start; gap: 12px; text-align: left; padding: 12px 16px; min-height: 68px; font-weight: 400; }
+.ring { width: 48px; height: 48px; flex: none; }
+.ring circle { fill: none; stroke-width: 3.5; }
+.ring .rt { stroke: var(--blue-bg); }
+.ring .rv { stroke: var(--blue); stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+.rest b { display: block; margin-left: 0; }
 .fb { fill: none; stroke: var(--g1000); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
 .fb circle { fill: var(--g1000); stroke: none; }
 .fp { fill: none; stroke: var(--g500); stroke-width: 2; stroke-linecap: round; }
@@ -291,7 +333,7 @@ dialog p { margin: 6px 0 20px; white-space: pre-line; }
 @media (prefers-reduced-motion: reduce) { /* keep fades, drop movement */
   button:active, .btn:active, a.card:active, nav a:active svg { transform: none; }
   .ind, dialog { transition: none; }
-  .setrow.new .mark, .setcard.new, .rest.in, .cele h1, .cele .grid2 .card { animation-name: fade; }
+  .setrow.new .mark, .setcard.new, .rest.in, .cele h1, .cele .grid2 .card, .cele .bdg { animation-name: fade; }
   .bar i { transition: none; }
   .pics { display: grid; grid-template-columns: 1fr 1fr; aspect-ratio: 3/1; }
   .pics > * { position: static; animation: none !important; }
@@ -308,7 +350,7 @@ dialog p { margin: 6px 0 20px; white-space: pre-line; }
   <a href="#/settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h8M16 18h4"/><circle cx="16" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="14" cy="18" r="2"/></svg>Ayarlar</a>
 </nav>
 <dialog id="dlg"><form method="dialog">
-  <h3 id="dlgT"></h3><p id="dlgB"></p>
+  <div id="dlgX"></div><h3 id="dlgT"></h3><p id="dlgB"></p>
   <div class="stack"><button class="primary big" id="dlgOk" value="ok"></button><button class="big" id="dlgNo" value="">Vazgeç</button></div>
 </form></dialog>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
@@ -415,8 +457,8 @@ function go(dir, fn) {
   t.ready.catch(() => {}); t.finished.catch(() => {}); // a newer transition interrupting this one is fine
 }
 const depth = h => { const [, p, a] = h.split('/'); return p === 'ex' ? 2 : p === 'workout' || p === 'summary' || p === 'streak' || (p === 'history' && a) ? 1 : 0; };
-function ask(title, body = '', ok = 'Tamam', { danger, cancel = true } = {}) {
-  const d = $('#dlg');
+function ask(title, body = '', ok = 'Tamam', { danger, cancel = true, html = '' } = {}) {
+  const d = $('#dlg'); $('#dlgX').innerHTML = html;
   $('#dlgT').textContent = title; $('#dlgB').textContent = body;
   $('#dlgOk').textContent = ok; $('#dlgOk').classList.toggle('red', !!danger); $('#dlgNo').hidden = !cancel;
   d.returnValue = ''; d.showModal();
@@ -547,6 +589,11 @@ const A = {
   },
   importData() { $('#importFile').click(); },
   hideInstall() { S.settings.hideInstall = true; save(); render(); },
+  badge(id) {
+    const b = badges().find(b => b.id === id), h = S.history.find(h => h.badges?.includes(id));
+    ask(b.name, b.got ? `${b.desc}.${h ? ` ${fmtDate(h.end, { day: 'numeric', month: 'long', year: 'numeric' })} tarihinde kazandın.` : ''}`
+      : `${b.desc}.\nİlerleme: ${b.cur.toLocaleString('tr-TR')} / ${b.need.toLocaleString('tr-TR')}`, 'Tamam', { cancel: false, html: medal(b, 128) });
+  },
   cal(d) { calM = Math.max(0, calM + +d); render(); },
   saveBody() { // one entry per day: saving again on the same day updates it
     const val = (id, lo, hi) => { const v = parseFloat($(id).value.trim().replace(',', '.')); return v >= lo && v <= hi ? Math.round(v * 10) / 10 : null; };
@@ -639,24 +686,59 @@ function streak(H = S.history) {
   return { cur, best, goal, week: cnt[monday().getTime()] || 0 };
 }
 const volume = h => h.ex.reduce((n, e) => n + e.sets.reduce((m, s) => m + (parseFloat(s.kg) || 0) * (parseFloat(s.reps) || 0), 0), 0);
-// [id, name, how to earn, icon, counter, needed] — all derived from history, nothing stored
+// Badges: [id, name, how to earn, counter, needed, tier, label on the medal] — all derived from history, nothing stored
 const BADGES = [
-  ['n1', 'İlk Adım', 'İlk antrenman', 'bell', 'n', 1], ['n5', 'Isındın', '5 antrenman', 'bell', 'n', 5],
-  ['n10', 'Çift Hane', '10 antrenman', 'bell', 'n', 10], ['n25', 'Müdavim', '25 antrenman', 'bell', 'n', 25],
-  ['n50', 'Yarım Yüz', '50 antrenman', 'bell', 'n', 50], ['n100', 'Yüzler Kulübü', '100 antrenman', 'bell', 'n', 100],
-  ['s2', 'İki Hafta', '2 hafta seri', 'flame', 's', 2], ['s4', 'Bir Ay', '4 hafta seri', 'flame', 's', 4],
-  ['s8', 'İki Ay', '8 hafta seri', 'flame', 's', 8], ['s12', 'Çeyrek Yıl', '12 hafta seri', 'flame', 's', 12],
-  ['p1', 'İlk Rekor', 'Bir rekor kır', 'star', 'pr', 1], ['p10', 'Rekortmen', '10 rekor', 'star', 'pr', 10],
-  ['t10', '10 Ton', '10.000 kg kaldır', 'ton', 'vol', 10000], ['t100', '100 Ton', '100.000 kg kaldır', 'ton', 'vol', 100000],
-  ['h5', 'Ev Disiplini', '5 ev rutini', 'home', 'home', 5],
+  ['n1', 'İlk Adım', 'İlk antrenmanını tamamla', 'n', 1, 'b', '1'], ['n5', 'Isındın', '5 antrenman tamamla', 'n', 5, 'b', '5'],
+  ['n10', 'Çift Hane', '10 antrenman tamamla', 'n', 10, 's', '10'], ['n25', 'Müdavim', '25 antrenman tamamla', 'n', 25, 'g', '25'],
+  ['n50', 'Yarım Yüz', '50 antrenman tamamla', 'n', 50, 'p', '50'], ['n100', 'Yüzler Kulübü', '100 antrenman tamamla', 'n', 100, 'o', '100'],
+  ['s2', 'İki Hafta', '2 hafta üst üste haftalık hedefi tuttur', 's', 2, 'b', '2'], ['s4', 'Bir Ay', '4 hafta üst üste hedefi tuttur', 's', 4, 's', '4'],
+  ['s8', 'İki Ay', '8 hafta üst üste hedefi tuttur', 's', 8, 'g', '8'], ['s12', 'Çeyrek Yıl', '12 hafta üst üste hedefi tuttur', 's', 12, 'p', '12'],
+  ['s26', 'Yarım Yıl', '26 hafta üst üste hedefi tuttur', 's', 26, 'o', '26'],
+  ['p1', 'İlk Rekor', 'Bir harekette ağırlık rekoru kır', 'pr', 1, 'b', '1'], ['p10', 'Rekortmen', '10 ağırlık rekoru kır', 'pr', 10, 's', '10'],
+  ['p25', 'Rekor Avcısı', '25 ağırlık rekoru kır', 'pr', 25, 'g', '25'],
+  ['t10', '10 Ton', 'Toplam 10.000 kg kaldır', 'vol', 10000, 'b', '10T'], ['t100', '100 Ton', 'Toplam 100.000 kg kaldır', 'vol', 100000, 's', '100T'],
+  ['t500', '500 Ton', 'Toplam 500.000 kg kaldır', 'vol', 500000, 'g', '500T'],
+  ['h5', 'Ev Disiplini', '5 ev rutini tamamla', 'home', 5, 'b', '5'], ['h25', 'Ev Ustası', '25 ev rutini tamamla', 'home', 25, 's', '25'],
 ];
+const GROUP = { n: ['Antrenman', 'bell'], s: ['Hafta serisi', 'flame'], pr: ['Rekor', 'star'], vol: ['Toplam ağırlık', 'ton'], home: ['Ev rutini', 'home'] };
 function badges(H = S.history) {
   const v = { n: H.filter(h => !h.home).length, s: streak(H).best, pr: H.reduce((n, h) => n + (h.prs?.length || 0), 0),
     vol: Math.round(H.reduce((n, h) => n + volume(h), 0)), home: H.filter(h => h.home).length };
-  return BADGES.map(([id, name, desc, icon, k, need]) => ({ id, name, desc, icon, cur: Math.min(v[k], need), need, got: v[k] >= need }));
+  return BADGES.map(([id, name, desc, k, need, tier, label]) => ({ id, name, desc, k, icon: GROUP[k][1], need, tier, label, cur: Math.min(v[k], need), got: v[k] >= need }));
 }
-const badgeHtml = b => `<div class="bdg ${b.got ? 'got' : ''}"><span class="bi">${ic(b.icon)}</span><strong>${b.name}</strong>
-  <span>${b.got ? b.desc : `${b.cur.toLocaleString('tr-TR')} / ${b.need.toLocaleString('tr-TR')}`}</span></div>`;
+
+// Medals are drawn as SVG: a shape per group, a metal per tier (bronze, silver, gold, blue, onyx).
+const TIER = { b: ['#f0c39c', '#b9774a', '#70401f'], s: ['#ffffff', '#b4bac4', '#6d7480'], g: ['#fff0a8', '#eeb02a', '#9a6200'], p: ['#b6f0ff', '#3b9dff', '#173fc4'], o: ['#6b6b6b', '#1f1f1f', '#000000'] };
+const TXT = { b: '#fff', s: '#22252b', g: '#4a2e00', p: '#fff', o: '#ff8a3d' };
+document.body.insertAdjacentHTML('beforeend', `<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>${
+  Object.entries(TIER).map(([k, [a, b, c]]) => `
+    <linearGradient id="m-${k}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset=".5" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></linearGradient>
+    <linearGradient id="mi-${k}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c}"/><stop offset=".6" stop-color="${b}"/><stop offset="1" stop-color="${a}"/></linearGradient>`).join('')}
+  <linearGradient id="m-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/></linearGradient></defs></svg>`);
+const poly = (n, r, rot = -90, r2 = r) => Array.from({ length: n }, (_, i) => {
+  const a = (rot + i * 360 / n) * Math.PI / 180, q = i % 2 ? r2 : r;
+  return `${(50 + q * Math.cos(a)).toFixed(1)},${(50 + q * Math.sin(a)).toFixed(1)}`;
+}).join(' ');
+const SHAPES = {
+  n: a => `<polygon points="${poly(6, 47)}" stroke-linejoin="round" ${a}/>`,
+  s: a => `<path d="M50 4 90 17v31c0 24-17 39-40 48C27 87 10 72 10 48V17z" stroke-linejoin="round" ${a}/>`,
+  pr: a => `<polygon points="${poly(20, 48, -90, 41)}" stroke-linejoin="round" ${a}/>`,
+  vol: a => `<polygon points="${poly(8, 48, -67.5)}" stroke-linejoin="round" ${a}/>`,
+  home: a => `<circle cx="50" cy="50" r="46" ${a}/>`,
+};
+function medal(b, size = 68) {
+  const at = (s, a) => `<g transform="translate(50 50) scale(${s}) translate(-50 -50)">${SHAPES[b.k](a)}</g>`;
+  const fs = b.label.length > 3 ? 19 : b.label.length > 2 ? 23 : 30, col = b.got ? TXT[b.tier] : 'var(--g500)', up = b.k === 's' ? 5 : 0;
+  return `<svg class="medal ${b.got ? '' : 'off'}" width="${size}" height="${size}" viewBox="0 0 100 100" aria-hidden="true">${
+    b.got ? at(1, `fill="url(#m-${b.tier})"`) + at(.82, `fill="url(#mi-${b.tier})" stroke="rgba(255,255,255,.45)" stroke-width="1.5"`) + at(.82, 'fill="url(#m-sheen)"')
+          : at(1, 'class="ml"')}
+    <text x="50" y="${54 - up}" font-size="${fs}" fill="${col}" class="mt">${b.label}</text>
+    <g transform="translate(40.4 ${59 - up}) scale(.8)" fill="none" stroke="${col}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[b.icon]}</g></svg>`;
+}
+const fresh1 = id => S.history[0]?.badges?.includes(id); // earned in the latest workout
+const badgeHtml = b => `<button class="bdg ${b.got ? 'got' : ''}" data-act="badge" data-arg="${b.id}" aria-label="${b.name}: ${b.got ? 'kazanıldı' : `${b.cur} / ${b.need}`}">
+  ${fresh1(b.id) ? '<span class="tag">Yeni</span>' : ''}${medal(b)}<strong>${b.name}</strong>
+  ${b.got ? '' : `<span class="num">${b.cur.toLocaleString('tr-TR')} / ${b.need.toLocaleString('tr-TR')}</span><span class="mini"><i style="width:${b.cur / b.need * 100}%"></i></span>`}</button>`;
 
 let calM = 0, celebrate = false; // calendar: months back from now · confetti: once, right after finishing
 function calendar() {
@@ -714,7 +796,9 @@ function streakPage() {
   <h2>Takvim</h2>
   ${calendar()}
   <h2>Rozetler · ${B.filter(b => b.got).length}/${B.length}</h2>
-  <div class="badges">${B.map(badgeHtml).join('')}</div>`;
+  ${Object.entries(GROUP).map(([k, [name]]) => { const g = B.filter(b => b.k === k); return `<div class="card">
+    <div class="row between"><strong>${name}</strong><span class="small muted num">${g.filter(b => b.got).length}/${g.length}</span></div>
+    <div class="badges" style="margin-top:8px">${g.map(badgeHtml).join('')}</div></div>`; }).join('')}`;
 }
 
 function home() {
@@ -773,10 +857,10 @@ function home() {
 }
 
 function workout() {
-  const a = S.active, e = a.ex[a.cur], t = e.target, isLast = a.cur === a.ex.length - 1;
+  const a = S.active, e = a.ex[a.cur], t = e.target, isLast = a.cur === a.ex.length - 1, nx = a.ex[a.cur + 1];
   const ci = curIdx(e), s = e.sets[ci], allDone = e.sets.every(s => s.done);
   const prev = lastSets(e.id), ps = prev[ci] || prev[prev.length - 1], up = a.home ? 0 : bump(e), note = S.notes[e.id];
-  const resting = a.restEnd > Date.now(), u = unitLabel(t.unit), restIn = resting && !wasResting;
+  const resting = a.restEnd > Date.now(), u = unitLabel(t.unit), restIn = resting && !wasResting, total = a.restTotal || S.settings.rest * 1000;
   wasResting = resting;
   const primary = a.hold ? ['complete', `Durdur · <span class="num" id="hold">${clock(a.hold.end - Date.now())}</span>`]
     : s && !s.done ? ['complete', t.unit === 'sn' ? `${s.reps} sn Başlat` : `${ci + 1}. Seti Tamamla`]
@@ -788,27 +872,28 @@ function workout() {
       <label><input inputmode="${mode}" enterkeyhint="done" data-f="${f}" value="${esc(nf(s[f]))}" placeholder="–" aria-label="${label}"><span>${f === 'kg' ? 'kg' : u}</span></label>
       <button data-act="step" data-arg="${f}:1" aria-label="${label} artır">+</button>
     </div>`;
+  // time between two finished sets, like a lap time
+  const gap = i => { const d = i && e.sets[i].done && e.sets[i - 1].done ? e.sets[i].done - e.sets[i - 1].done : 0; return d > 0 ? `<div class="gap num">${clock(d)} sonra</div>` : ''; };
   return `
   <div class="body">
   <div class="top">
-    <a class="btn ghost" href="#/" style="padding-left:0" aria-label="Ana sayfaya dön">‹ Çık</a>
-    <span class="num muted" id="elapsed">${clock(Date.now() - a.start)}</span>
-    <button class="ghost" data-act="finish" style="padding-right:0">Bitir</button>
+    <a class="btn round" href="#/" aria-label="Ana sayfaya dön, antrenman sürer">‹</a>
+    <div style="text-align:center"><div class="small muted">${esc(a.name)} · ${a.cur + 1}/${a.ex.length}</div><div class="timer" id="elapsed">${clock(Date.now() - a.start)}</div></div>
+    <button class="pillbtn" data-act="finish">Bitir</button>
   </div>
-  <div class="row between small muted"><span>${esc(a.name)}</span><span class="num">${a.cur + 1}/${a.ex.length}</span></div>
-  <div class="segs">${a.ex.map((x, i) => { const d = x.sets.filter(s => s.done).length;
-    return `<button class="${x.skipped ? 'k' : d && d === x.sets.length ? 'd' : d ? 'p' : ''} ${i === a.cur ? 'c' : ''}" data-act="go" data-arg="${i}" ${i === a.cur ? 'aria-current="step"' : ''} aria-label="${i + 1}. ${esc(x.name)}: ${x.skipped ? 'atlandı' : `${d}/${x.sets.length} set`}"><i></i></button>`; }).join('')}
+  <div class="strip">${a.ex.map((x, i) => { const d = x.sets.filter(s => s.done).length, all = d && d === x.sets.length;
+    return `<button class="st ${x.skipped ? 'k' : all ? 'd' : ''} ${i === a.cur ? 'c' : ''}" data-act="go" data-arg="${i}" ${all ? 'data-n="✓"' : d ? `data-n="${d}/${x.sets.length}"` : ''}
+      ${i === a.cur ? 'aria-current="step"' : ''} aria-label="${i + 1}. ${esc(x.name)}: ${x.skipped ? 'atlandı' : `${d}/${x.sets.length} set`}">${thumb(x.id, 48)}</button>`; }).join('')}
   </div>
-  <div class="row" style="align-items:flex-start;gap:12px">
-    <a href="#/ex/${e.id}" aria-label="${esc(e.name)} detayları">${thumb(e.id)}</a>
-    <div style="flex:1">
+  <div class="row between" style="align-items:flex-start">
+    <div>
       <h3><a href="#/ex/${e.id}" style="text-decoration:none">${esc(e.name)} <span class="muted" aria-hidden="true">›</span></a></h3>
       <p class="small" style="margin-top:2px">Hedef <span class="num">${target(t)}</span>${note ? ` · ${esc(note)}` : ''}</p>
     </div>
     ${e.skipped ? '<span class="badge">Atlandı</span>' : allDone ? '<span class="badge ok">✓ Tamam</span>' : ''}
   </div>
   ${up ? `<button class="chip" data-act="bump">Geçen sefer hedef tamam · ${nf(up)} kg dene</button>` : ''}
-  <div class="sets">${e.sets.map((x, i) => i === ci ? `
+  <div class="sets">${e.sets.map((x, i) => gap(i) + (i === ci ? `
     <div class="setcard ${fresh ? 'new' : ''}">
       <div class="row between"><strong>Set ${i + 1}</strong>
         ${x.done ? '<button class="ghost" style="min-height:32px;padding:0" data-act="undo">Tamamlanmadı yap</button>'
@@ -816,34 +901,31 @@ function workout() {
       ${a.home ? '' : stepper('kg', 'Ağırlık', 'decimal')}
       ${stepper('reps', t.unit === 'sn' ? 'Süre' : 'Tekrar', 'numeric')}
     </div>` : `
-    <button class="setrow ${x.done ? 'done' : ''} ${x === fresh ? 'new' : ''}" data-act="sel" data-arg="${i}" aria-label="Set ${i + 1}: ${esc(setText(x, t.unit))}, ${x.done ? 'tamamlandı' : 'bekliyor'}. Düzenle">
-      <span>${i + 1}</span><span>${esc(setText(x, t.unit))}</span><span class="mark" aria-hidden="true">${x.done ? '✓' : ''}</span>
-    </button>`).join('')}
+    <button class="setrow ${a.home ? 'one' : ''} ${x.done ? 'done' : ''} ${x === fresh ? 'new' : ''}" data-act="sel" data-arg="${i}" aria-label="Set ${i + 1}: ${esc(setText(x, t.unit))}, ${x.done ? 'tamamlandı' : 'bekliyor'}. Düzenle">
+      <span class="sn">${i + 1}</span>
+      ${a.home ? '' : `<span class="pill">${hasKg(x) ? nf(x.kg) : '–'}<small>kg</small></span>`}
+      <span class="pill">${x.reps}<small>${t.unit === 'sn' ? 'sn' : 'tekrar'}</small></span>
+      <span class="mark" aria-hidden="true">${x.done ? '✓' : ''}</span>
+    </button>`)).join('')}
   </div>
   <div class="row" style="margin-top:6px">
     <button class="ghost" style="padding-left:0" data-act="addSet">+ Set ekle</button>
     ${s && !s.done && e.sets.length > 1 ? `<button class="ghost" data-act="delSet">Set ${ci + 1}’i sil</button>` : ''}
   </div>
-  <details><summary>Tüm hareketler</summary>
-    <div class="card"><ul class="list">${a.ex.map((x, i) => `
-      <li><button class="ghost" style="padding:0;min-height:32px;text-align:left;${i === a.cur ? 'color:var(--g1000)' : ''}" data-act="go" data-arg="${i}">${i + 1}. ${esc(x.name)}</button>
-      <span class="badge ${x.sets.length && x.sets.every(s => s.done) ? 'ok' : ''}">${x.skipped ? 'Atlandı' : `${x.sets.filter(s => s.done).length}/${x.sets.length}`}</span></li>`).join('')}
-    </ul></div>
-  </details>
+  ${nx ? `<button class="card nextup" data-act="next">${thumb(nx.id, 44)}
+    <span style="flex:1"><span class="small muted" style="display:block">Sıradaki</span><strong>${esc(nx.name)}</strong></span>
+    <span class="muted num small">${target(nx.target)}</span><span class="muted" aria-hidden="true">›</span></button>` : ''}
   </div>
   <div class="dock">
     ${resting ? `
-    <div class="rest ${restIn ? 'in' : ''}">
-      <div class="row between"><span>Dinlenme<b id="rest">${clock(a.restEnd - Date.now())}</b></span>
-        <span class="row"><button data-act="restAdd">+30 sn</button><button data-act="restSkip">Geç</button></span></div>
-      <div class="bar"><i id="restbar" style="transform:scaleX(${(a.restEnd - Date.now()) / (a.restTotal || S.settings.rest * 1000)})"></i></div>
+    <div class="rest row between ${restIn ? 'in' : ''}">
+      <div class="row"><svg class="ring" viewBox="0 0 36 36" aria-hidden="true"><circle class="rt" cx="18" cy="18" r="15.5"/>
+        <circle class="rv" id="restbar" cx="18" cy="18" r="15.5" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${100 - (a.restEnd - Date.now()) / total * 100}" transform="rotate(-90 18 18)"/></svg>
+        <div><div class="small">Dinlenme</div><b id="rest">${clock(a.restEnd - Date.now())}</b></div></div>
+      <span class="row"><button data-act="restAdd">+30 sn</button><button data-act="restSkip">Geç</button></span>
     </div>` : ''}
     <button class="primary big" data-act="${primary[0]}">${primary[1]}</button>
-    <div class="row between" style="margin-top:6px">
-      <button class="ghost" data-act="prev" ${a.cur ? '' : 'disabled style="visibility:hidden"'}>‹ Önceki</button>
-      ${!allDone && !isLast ? '<button class="ghost" data-act="skip">Hareketi Atla</button>' : '<span></span>'}
-      <button class="ghost" data-act="next" ${isLast ? 'disabled style="visibility:hidden"' : ''}>Sonraki ›</button>
-    </div>
+    ${!allDone && !isLast ? '<button class="ghost full" style="margin-top:4px" data-act="skip">Bu Hareketi Atla</button>' : ''}
   </div>`;
 }
 
@@ -1010,6 +1092,7 @@ function render() {
   $('#nav').classList.toggle('none', tab < 0);
   if (tab >= 0) $('.ind').style.transform = `translateX(${tab * 100}%)`;
   fresh = null; celebrate = false;
+  const cs = $('.st.c'); if (cs) cs.parentNode.scrollLeft = cs.offsetLeft - cs.parentNode.clientWidth / 2 + 24; // keep the current exercise in view
   awake();
 }
 
@@ -1055,12 +1138,12 @@ function tick() {
   if (a.restEnd) {
     const left = a.restEnd - Date.now();
     if (left <= 0) { a.restEnd = 0; save(); beep(); if (onPage && !typing) render(); }
-    else if ($('#rest')) { $('#rest').textContent = clock(left); $('#restbar').style.transform = `scaleX(${left / (a.restTotal || S.settings.rest * 1000)})`; }
+    else if ($('#rest')) { $('#rest').textContent = clock(left); $('#restbar').style.strokeDashoffset = 100 - left / (a.restTotal || S.settings.rest * 1000) * 100; }
   }
 }
 // Swipe left/right on the workout screen to change exercise
 let tx = null;
-addEventListener('touchstart', ev => { const p = ev.touches[0]; tx = ev.target.closest('input, .step, dialog, .dock') ? null : [p.clientX, p.clientY, Date.now()]; }, { passive: true });
+addEventListener('touchstart', ev => { const p = ev.touches[0]; tx = ev.target.closest('input, .step, dialog, .dock, .strip') ? null : [p.clientX, p.clientY, Date.now()]; }, { passive: true });
 addEventListener('touchend', ev => {
   if (!tx || !S.active || location.hash !== '#/workout') return;
   const p = ev.changedTouches[0], dx = p.clientX - tx[0], dy = p.clientY - tx[1];
