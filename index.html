@@ -34,7 +34,7 @@
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #0a0a0a; --bg2: #000;
     --g100: #171717; --g200: #202020; --g400: #2a2a2a; --g500: #3d3d3d;
     --g900: #a1a1a1; --g1000: #ededed;
@@ -44,6 +44,17 @@
     --shadow: 0 1px 1px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.3);
   }
 }
+:root[data-theme="dark"] {
+    --bg: #0a0a0a; --bg2: #000;
+    --g100: #171717; --g200: #202020; --g400: #2a2a2a; --g500: #3d3d3d;
+    --g900: #a1a1a1; --g1000: #ededed;
+    --green: #4ccf75; --green-bg: #0d2416; --green-border: #1d5a32;
+    --blue: #52a8ff; --blue-bg: #0b1d33;
+    --red: #ff6166; --flame: #ff8a3d;
+    --shadow: 0 1px 1px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.3);
+}
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
 * { box-sizing: border-box; margin: 0; }
 [hidden] { display: none !important; }
 html { background: var(--bg2); -webkit-text-size-adjust: 100%; }
@@ -276,6 +287,56 @@ dialog p { margin: 6px 0 20px; white-space: pre-line; }
 #dlgX:not(:empty) ~ h3, #dlgX:not(:empty) ~ p { text-align: center; }
 .cele .bdg { animation: pop .3s var(--ease-out) both; animation-delay: .3s; }
 
+/* home: week card + photo hero */
+.wkc { display: block; text-decoration: none; }
+.wkt { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.wkn { font: 650 40px/1 var(--sans); letter-spacing: -.04em; }
+.wkn span { font-size: 20px; font-weight: 500; color: var(--g900); letter-spacing: 0; }
+.wk { display: flex; gap: 5px; }
+.wp { display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 11px; color: var(--g900); }
+.wp i { width: 27px; height: 46px; border-radius: 14px; background: var(--g100); display: grid; place-items: center; font: 600 12px var(--sans); color: var(--g900); }
+.wp.done i { background: var(--g1000); color: var(--bg); }
+.wp.home i { background: var(--green-bg); color: var(--green); }
+.wp.plan i { background: transparent; border: 1.5px dashed var(--g500); color: var(--g1000); }
+.wp.today span { color: var(--g1000); font-weight: 700; }
+.wkf { display: flex; align-items: center; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--g200); font-size: 14px; color: var(--g900); }
+.hero { min-height: 300px; display: flex; flex-direction: column; justify-content: space-between; padding: 14px 16px 16px; border-radius: 24px;
+  background-color: #151515; background-size: cover; background-position: center; color: #fff; }
+.hero p { opacity: .82; }
+.hero h3 { font-size: 30px; margin: 2px 0 4px; }
+.hl { padding: 5px 11px; border-radius: 99px; background: rgba(255,255,255,.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); font-size: 13px; font-weight: 550; }
+.hseg { display: flex; gap: 2px; padding: 3px; border-radius: 99px; background: rgba(255,255,255,.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.hseg button { min-height: 34px; min-width: 40px; padding: 0 12px; border: 0; border-radius: 99px; background: transparent; color: #fff; font-size: 14px; }
+.hseg button[aria-pressed="true"] { background: #fff; color: #111; }
+.inv { background: #fff; color: #111; }
+.inv:active { background: #dcdcdc; }
+
+/* grouped rows: history + settings */
+.group { background: var(--bg); border: 1px solid var(--g400); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+.srow { display: flex; align-items: center; justify-content: flex-start; gap: 12px; width: 100%; min-height: 60px; padding: 8px 14px; border: 0; border-radius: 0;
+  background: none; text-align: left; font-weight: 400; color: var(--g1000); text-decoration: none; }
+.srow + .srow { border-top: 1px solid var(--g200); }
+a.srow:active, button.srow:active { background: var(--g100); transform: none; }
+.srow.danger { color: var(--red); }
+.srow.danger .si { background: color-mix(in srgb, var(--red) 12%, transparent); }
+.si { width: 34px; height: 34px; flex: none; border-radius: 10px; background: var(--g100); display: grid; place-items: center; }
+.sl { flex: 1; min-width: 0; }
+.sl strong { font-weight: 600; }
+.stp { display: flex; align-items: center; gap: 4px; }
+.stp button { width: 40px; height: 40px; min-height: 0; padding: 0; border-radius: 50%; background: var(--g100); border-color: transparent; font-size: 20px; font-weight: 400; }
+.stp span { min-width: 60px; text-align: center; font-size: 15px; font-weight: 500; }
+.dt { width: 44px; height: 48px; flex: none; border-radius: 12px; background: var(--g1000); color: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15; }
+.dt b { font-size: 17px; }
+.dt span { font-size: 11px; opacity: .7; }
+.dt.hm { background: var(--green-bg); color: var(--green); }
+.tgl { appearance: none; -webkit-appearance: none; flex: none; width: 50px; height: 30px; border-radius: 99px; background: var(--g500); position: relative; cursor: pointer; transition: background-color .2s ease; }
+.tgl::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s var(--ease-out); }
+.tgl:checked { background: var(--green); }
+.tgl:checked::after { transform: translateX(20px); }
+.chips { display: flex; gap: 8px; margin-top: 16px; }
+.chips button { min-height: 36px; padding: 0 14px; border-radius: 99px; font-size: 14px; }
+.chips button[aria-pressed="true"] { background: var(--g1000); color: var(--bg); border-color: var(--g1000); }
+
 /* workout screen */
 .top { margin: -4px 0 8px; }
 .round { width: 44px; height: 44px; padding: 0; border-radius: 50%; font-size: 22px; }
@@ -408,13 +469,19 @@ const BACK = {"head":["506 0 460 9 409 55 404 128 451 200 557 200 591 136 596 47
 // ---------- State (localStorage) ----------
 const KEY = 'fitness-v1', DAY = 864e5;
 const norm = d => ({ active: d.active || null, history: d.history, notes: d.notes || {}, body: d.body || [],
-  settings: { rest: 90, step: 2.5, goal: 3, sound: true, lastBackup: 0, ...d.settings } });
+  settings: { rest: 90, step: 2.5, goal: 3, sound: true, theme: 'auto', lastBackup: 0, ...d.settings } });
 let S = load();
 function load() {
   try { const d = JSON.parse(localStorage.getItem(KEY)); if (d && Array.isArray(d.history)) return norm(d); } catch {}
   return norm({ history: [] });
 }
 function save() { localStorage.setItem(KEY, JSON.stringify(S)); }
+function applyTheme() {
+  const th = S.settings.theme, bg = { light: '#fafafa', dark: '#000000' };
+  if (th === 'auto') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = th;
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.content = bg[th] || (m.media.includes('dark') ? bg.dark : bg.light));
+}
+applyTheme();
 
 // ---------- Helpers ----------
 const $ = s => document.querySelector(s);
@@ -453,10 +520,12 @@ const calm = matchMedia('(prefers-reduced-motion: reduce)');
 function go(dir, fn) {
   if (!document.startViewTransition || document.hidden) return fn();
   document.documentElement.dataset.nav = calm.matches ? 'tab' : dir;
-  const t = document.startViewTransition(fn);
+  let ran = false; const once = () => { if (!ran) { ran = true; fn(); } };
+  const t = document.startViewTransition(once);
+  setTimeout(once, 300); // never let a stalled transition hold the page back
   t.ready.catch(() => {}); t.finished.catch(() => {}); // a newer transition interrupting this one is fine
 }
-const depth = h => { const [, p, a] = h.split('/'); return p === 'ex' ? 2 : p === 'workout' || p === 'summary' || p === 'streak' || (p === 'history' && a) ? 1 : 0; };
+const depth = h => { const [, p, a] = h.split('/'); return p === 'ex' ? 2 : p === 'workout' || p === 'summary' || p === 'streak' || p === 'exercises' || (p === 'history' && a) ? 1 : 0; };
 function ask(title, body = '', ok = 'Tamam', { danger, cancel = true, html = '' } = {}) {
   const d = $('#dlg'); $('#dlgX').innerHTML = html;
   $('#dlgT').textContent = title; $('#dlgB').textContent = body;
@@ -594,6 +663,15 @@ const A = {
     ask(b.name, b.got ? `${b.desc}.${h ? ` ${fmtDate(h.end, { day: 'numeric', month: 'long', year: 'numeric' })} tarihinde kazandın.` : ''}`
       : `${b.desc}.\nİlerleme: ${b.cur.toLocaleString('tr-TR')} / ${b.need.toLocaleString('tr-TR')}`, 'Tamam', { cancel: false, html: medal(b, 128) });
   },
+  set(arg) { // settings steppers
+    const [k, d] = arg.split(':'), st = S.settings, steps = [1, 1.25, 2.5, 5, 10], i = steps.indexOf(st.step);
+    if (k === 'rest') st.rest = Math.min(600, Math.max(15, st.rest + d * 15));
+    if (k === 'goal') st.goal = Math.min(7, Math.max(1, st.goal + +d));
+    if (k === 'step') st.step = steps[Math.min(4, Math.max(0, (i < 0 ? 2 : i) + +d))];
+    save(); render();
+  },
+  theme(th) { S.settings.theme = th; save(); applyTheme(); render(); },
+  histF(k) { histF = k; render(); },
   cal(d) { calM = Math.max(0, calM + +d); render(); },
   saveBody() { // one entry per day: saving again on the same day updates it
     const val = (id, lo, hi) => { const v = parseFloat($(id).value.trim().replace(',', '.')); return v >= lo && v <= hi ? Math.round(v * 10) / 10 : null; };
@@ -621,22 +699,22 @@ $('#importFile').addEventListener('change', async ev => {
     const d = JSON.parse(await f.text());
     if (!d || !Array.isArray(d.history) || !d.settings) throw new Error('Bu dosya bir antrenman yedeği değil.');
     if (!await ask('Yedek geri yüklensin mi?', `Yedekte ${d.history.length} antrenman var. Şu anki verilerin yerine geçer.`, 'Geri Yükle')) return;
-    S = norm(d); save(); render();
+    S = norm(d); save(); applyTheme(); render();
   } catch (err) { ask('Geri yükleme başarısız', err.message, 'Tamam', { cancel: false }); }
 });
 
 // ---------- Views ----------
-function weekStrip() {
+function weekPills() {
   const today = new Date(); let nx = nextGym();
-  return `<div class="week" role="list" aria-label="Bu hafta">${['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'].map((n, i) => {
+  return `<div class="wk" role="list" aria-label="Bu haftanın günleri">${['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map((n, i) => {
     const d = monday(); d.setDate(d.getDate() + i);
     const g = gymOn(d), past = d < today && !sameDay(d, today);
     let cls = '', txt = '', label = 'boş gün';
-    if (g) { cls = 'done'; txt = g.plan; label = `${g.name} tamamlandı`; }
+    if (g) { cls = 'done'; txt = '✓'; label = `${g.name} tamamlandı`; }
     else if (S.history.some(h => h.home && sameDay(h.end, d))) { cls = 'home'; txt = '✓'; label = 'ev rutini tamamlandı'; }
-    else if (gymDay(d) && past) { cls = 'miss'; txt = '–'; label = 'yapılmadı'; }
+    else if (gymDay(d) && past) { txt = '–'; label = 'yapılmadı'; }
     else if (gymDay(d)) { cls = 'plan'; txt = nx; label = `Full Body ${nx} planlı`; nx = nx === 'A' ? 'B' : 'A'; }
-    return `<div class="day ${cls} ${sameDay(d, today) ? 'today' : ''}" role="listitem" aria-label="${n}: ${label}"><span>${n}</span><b>${txt}</b></div>`;
+    return `<div class="wp ${cls} ${sameDay(d, today) ? 'today' : ''}" role="listitem" aria-label="${n}: ${label}"><i>${txt}</i><span>${n[0]}</span></div>`;
   }).join('')}</div>`;
 }
 
@@ -646,6 +724,16 @@ const ICON = {
   star: '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
   ton: '<path d="M6 9h12l2 11H4z"/><path d="M9 9a3 3 0 0 1 6 0"/>',
   home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>',
+  timer: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/>',
+  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  sound: '<path d="M11 5 6 9H3v6h3l5 4zM15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  up: '<path d="M12 15V3M7 8l5-5 5 5M5 15v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/>',
+  down: '<path d="M12 3v12M7 10l5 5 5-5M5 15v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/>',
+  list: '<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
+  trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
 };
 const ic = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICON[n]}</svg>`;
 
@@ -802,14 +890,16 @@ function streakPage() {
 }
 
 function home() {
-  const a = S.active, last = S.history.find(h => !h.home), st = streak();
+  const a = S.active, last = S.history.find(h => !h.home), st = streak(), left = Math.max(0, st.goal - st.week);
   const k = pick || suggested(), p = PLANS[k], doneToday = gymOn(new Date()), lastSame = S.history.find(h => h.plan === k);
   const stale = !S.settings.lastBackup || Date.now() - S.settings.lastBackup > 14 * DAY;
   const hr = new Date().getHours(), hello = hr < 5 ? 'İyi geceler' : hr < 12 ? 'Günaydın' : hr < 18 ? 'İyi günler' : 'İyi akşamlar';
-  const sub = doneToday && !pick ? `Bugün ${esc(doneToday.name)} tamamlandı ✓`
-    : `${k === suggested() ? 'Bugün için önerilen' : 'Elle seçildi'}${k === 'H' ? ` · Sıradaki salon günü: ${nextGym()}` : ''}`;
   const needInstall = /iphone|ipad|ipod/i.test(navigator.userAgent) && !navigator.standalone && !S.settings.hideInstall;
   const body = ['kg', 'waist'].map(f => { const x = S.body.find(b => b[f] != null); return x ? `${nf(x[f])} ${f === 'kg' ? 'kg' : 'cm'}` : ''; }).filter(Boolean);
+  const ids = a ? a.ex.map(e => e.id) : p.items.map(i => i[0]), cover = ids.find(id => PICS.has(id));
+  const line = a ? `${doneCount(a)}/${a.ex.length} hareket · ${fmtTime(a.start)}’de başladı`
+    : `${p.items.length} hareket${lastSame ? ` · geçen sefer ${mins(lastSame.end - lastSame.start)}` : ''}`;
+  const over = a ? '' : doneToday && !pick ? `Bugün ${esc(doneToday.name)} tamamlandı ✓` : k === 'H' ? `Sıradaki salon günü: Full Body ${nextGym()}` : '';
   return `
   <div class="row between">
     <div><p class="small">${esc(fmtDate(Date.now()))}</p><h1 style="margin-top:2px">${hello}</h1></div>
@@ -817,29 +907,29 @@ function home() {
   </div>
   ${needInstall ? `<div class="card" style="margin-top:16px"><div class="row between"><strong>Ana ekrana ekle</strong><button class="ghost x" data-act="hideInstall" aria-label="Kapat">×</button></div>
     <p class="small">Safari’de Paylaş düğmesine dokunup “Ana Ekrana Ekle”yi seç. Uygulama tam ekran açılır ve kayıtların silinme riski kalkar.</p></div>` : ''}
-  <a class="card" href="#/streak" style="display:block;margin-top:${needInstall ? 10 : 16}px;text-decoration:none">
-    <div class="row between"><strong>Bu hafta</strong><span class="small muted num">${st.week}/${st.goal} antrenman</span></div>
-    ${weekStrip()}
-    <div class="goal">${Array.from({ length: st.goal }, (_, i) => `<i class="${i < st.week ? 'on' : ''}"></i>`).join('')}</div>
+  <a class="card wkc" href="#/streak" style="margin-top:${needInstall ? 10 : 16}px">
+    <div class="wkt"><div><div class="wkn num">${st.week}<span>/${st.goal}</span></div><p class="small">Bu hafta</p></div>${weekPills()}</div>
+    <div class="wkf">${ic('flame', st.week >= st.goal ? 'lit' : '')}<span style="flex:1">${st.week >= st.goal ? `Haftalık hedef tamam · ${st.cur} hafta seri`
+      : `${st.cur ? 'Seriyi korumak' : 'Seriyi başlatmak'} için ${left} antrenman daha`}</span><span aria-hidden="true">›</span></div>
   </a>
-  ${a ? `
-    <div class="hero">
-      <p class="small">Devam eden antrenman</p>
-      <h3>${esc(a.name)}</h3>
-      <p class="small">${doneCount(a)}/${a.ex.length} hareket · ${fmtTime(a.start)}’de başladı</p>
-      <button class="big inv" data-act="resume">Antrenmana Devam Et</button>
-      <button class="ghost full" style="color:inherit;opacity:.7;margin-top:4px" data-act="discard">Antrenmanı Sil…</button>
-    </div>` : `
-    <div class="seg" style="margin-top:12px" role="group" aria-label="Antrenman seç">
-      ${['A', 'B', 'H'].map(x => `<button data-act="pick" data-arg="${x}" aria-pressed="${x === k}">${x === 'H' ? 'Ev' : x}</button>`).join('')}
+  <div class="hero" style="background-image:linear-gradient(180deg,rgba(0,0,0,.5),rgba(0,0,0,.12) 42%,rgba(0,0,0,.9))${cover ? `,url(img/${cover}-1.jpg)` : ''}">
+    <div class="row between">
+      <span class="hl">${a ? 'Devam ediyor' : k === suggested() ? 'Bugün için önerilen' : 'Elle seçildi'}</span>
+      ${a ? '' : `<div class="hseg" role="group" aria-label="Antrenman seç">${['A', 'B', 'H'].map(x =>
+        `<button data-act="pick" data-arg="${x}" aria-pressed="${x === k}" aria-label="${esc(PLANS[x].name)}">${x === 'H' ? 'Ev' : x}</button>`).join('')}</div>`}
     </div>
-    <div class="hero">
-      <p class="small">${sub}</p>
-      <h3>${esc(p.name)}</h3>
-      <p class="small">${p.items.length} hareket${lastSame ? ` · geçen sefer ${mins(lastSame.end - lastSame.start)}` : ''}</p>
-      <button class="big inv" data-act="start" data-arg="${k}">Antrenmana Başla</button>
+    <div>
+      ${over ? `<p class="small">${over}</p>` : ''}
+      <h3>${esc(a ? a.name : p.name)}</h3>
+      <p class="small">${line}</p>
+      ${a ? `<button class="big inv" data-act="resume">Antrenmana Devam Et</button>
+             <button class="ghost full" style="color:#fff;opacity:.75;margin-top:4px" data-act="discard">Antrenmanı Sil…</button>`
+          : `<button class="big inv" data-act="start" data-arg="${k}">Antrenmana Başla</button>`}
     </div>
-    <div class="card" style="margin-top:12px">
+  </div>
+  ${a ? '' : `
+    <h2>Hareketler</h2>
+    <div class="card">
       <ul class="list">${p.items.map(([id, sets, reps, unit = '', max]) => { const kg = p.home ? 0 : topKg(lastSets(id)); return `
         <li style="align-items:center"><a class="row" href="#/ex/${id}" style="gap:12px;flex:1;min-width:0">${thumb(id, 44)}<span>${esc(EX[id].n)}</span></a>
         <span class="muted num small" style="white-space:nowrap;text-align:right">${target({ sets, reps, unit, max })}${kg ? `<br>${nf(kg)} kg` : ''}</span></li>`; }).join('')}
@@ -929,13 +1019,35 @@ function workout() {
   </div>`;
 }
 
+let histF = 'all'; // history filter: all | gym | home
+const dur = ms => { const m = Math.round(ms / 6e4); return m >= 60 ? `${Math.floor(m / 60)} sa ${m % 60} dk` : `${m} dk`; };
+const kgs = v => v >= 1000 ? `${nf((v / 1000).toFixed(1))} ton` : `${Math.round(v)} kg`;
 function historyList() {
-  if (!S.history.length) return `<h1>Geçmiş</h1><div class="card" style="margin-top:16px"><p>Henüz tamamlanan antrenman yok. İlk antrenmanını bitirdiğinde burada görünecek.</p></div>`;
-  return `<h1>Geçmiş</h1><div style="margin-top:16px">${S.history.map(h => `
-    <a class="card row between" href="#/history/${h.id}" style="text-decoration:none;display:flex">
-      <div><strong>${esc(h.name)}</strong><p class="small">${esc(fmtDate(h.end, { weekday: 'short', day: 'numeric', month: 'long' }))} · ${mins(h.end - h.start)}</p></div>
-      <span class="row">${h.prs?.length ? `<span class="badge ok">${h.prs.length} rekor</span>` : ''}<span class="badge">${h.ex.filter(e => e.sets.length).length}/${h.ex.length}</span></span>
-    </a>`).join('')}</div>`;
+  const all = S.history;
+  if (!all.length) return `<h1>Geçmiş</h1><div class="card" style="margin-top:16px"><p>Henüz tamamlanan antrenman yok. İlk antrenmanını bitirdiğinde burada görünecek.</p></div>`;
+  const mk = t => { const d = new Date(t); return d.getFullYear() * 12 + d.getMonth(); };
+  const H = all.filter(h => histF === 'all' || (histF === 'home') === !!h.home), month = all.filter(h => !h.home && mk(h.end) === mk(Date.now()));
+  const groups = [];
+  H.forEach(h => { const k = mk(h.end); if (groups.at(-1)?.k !== k) groups.push({ k, t: h.end, items: [] }); groups.at(-1).items.push(h); });
+  const row = h => { const d = new Date(h.end), sets = h.ex.reduce((n, e) => n + e.sets.length, 0), v = volume(h); return `
+    <a class="srow" href="#/history/${h.id}">
+      <span class="dt ${h.home ? 'hm' : ''}"><b class="num">${d.getDate()}</b><span>${esc(d.toLocaleDateString('tr-TR', { weekday: 'short' }))}</span></span>
+      <div class="sl"><strong>${esc(h.name)}</strong><p class="small" style="font-variant-numeric:tabular-nums;white-space:nowrap">${mins(h.end - h.start)}${sets ? ` · ${sets} set` : ''}${v ? ` · ${kgs(v)}` : ''}</p></div>
+      ${h.prs?.length ? `<span class="badge ok">${h.prs.length} rekor</span>` : ''}<span class="muted" aria-hidden="true">›</span>
+    </a>`; };
+  return `
+  <div class="row between"><h1>Geçmiş</h1><a class="btn" href="#/streak" style="border-radius:99px;min-height:40px;padding:0 14px">${ic('cal')}Takvim</a></div>
+  <div class="grid2" style="margin-top:16px;grid-template-columns:repeat(3,1fr)">
+    <div class="card"><p class="small">Bu ay</p><div class="stat num">${month.length}</div><p class="small">antrenman</p></div>
+    <div class="card"><p class="small">Süre</p><div class="stat num" style="font-size:20px;white-space:nowrap;line-height:1.55">${(m => m >= 60 ? `${nf((m / 60).toFixed(1))}<span class="small muted"> sa</span>` : `${m}<span class="small muted"> dk</span>`)(Math.round(month.reduce((n, h) => n + h.end - h.start, 0) / 6e4))}</div><p class="small">bu ay</p></div>
+    <div class="card"><p class="small">Kaldırılan</p><div class="stat num" style="font-size:20px;white-space:nowrap;line-height:1.55">${(v => v >= 1000 ? `${nf((v / 1000).toFixed(1))}<span class="small muted"> ton</span>` : `${Math.round(v)}<span class="small muted"> kg</span>`)(month.reduce((n, h) => n + volume(h), 0))}</div><p class="small">bu ay</p></div>
+  </div>
+  <div class="chips" role="group" aria-label="Filtre">${[['all', 'Tümü'], ['gym', 'Salon'], ['home', 'Ev']].map(([k, n]) =>
+    `<button data-act="histF" data-arg="${k}" aria-pressed="${histF === k}">${n}</button>`).join('')}</div>
+  ${groups.length ? groups.map(g => `
+    <h2 class="row between"><span>${esc(new Date(g.t).toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' }))}</span>
+      <span class="num" style="text-transform:none;letter-spacing:0;font-weight:400">${g.items.length} antrenman · ${dur(g.items.reduce((n, h) => n + h.end - h.start, 0))}</span></h2>
+    <div class="group">${g.items.map(row).join('')}</div>`).join('') : `<p class="small" style="margin-top:20px">Bu filtrede kayıt yok.</p>`}`;
 }
 
 function historyDetail(id, summary) {
@@ -1044,30 +1156,51 @@ function exercise(id) {
 }
 
 function settings() {
-  const st = S.settings;
+  const st = S.settings, n = S.history.length;
+  const stp = (k, val) => `<div class="stp"><button data-act="set" data-arg="${k}:-1" aria-label="Azalt">−</button><span class="num">${val}</span><button data-act="set" data-arg="${k}:1" aria-label="Artır">+</button></div>`;
+  const srow = (icon, label, sub, right) => `<div class="srow"><span class="si">${ic(icon)}</span><div class="sl">${label}${sub ? `<p class="small">${sub}</p>` : ''}</div>${right}</div>`;
+  const link = (icon, label, sub, attrs, cls = '') => `<${attrs.startsWith('href') ? 'a' : 'button'} class="srow ${cls}" ${attrs}><span class="si">${ic(icon)}</span>
+    <div class="sl">${label}${sub ? `<p class="small">${sub}</p>` : ''}</div><span class="muted" aria-hidden="true">›</span></${attrs.startsWith('href') ? 'a' : 'button'}>`;
   return `
   <h1>Ayarlar</h1>
   <h2>Antrenman</h2>
-  <div class="card stack">
-    <div class="row between"><label for="rest">Dinlenme süresi (sn)</label>
-      <input id="rest" class="field" inputmode="numeric" value="${st.rest}"></div>
-    <div class="row between"><label for="goal">Haftalık hedef<p class="small">Seri için haftada kaç salon antrenmanı</p></label>
-      <input id="goal" class="field" inputmode="numeric" value="${st.goal}"></div>
-    <div class="row between"><label for="step">Ağırlık adımı (kg)<p class="small">+ ve − düğmelerinin artışı</p></label>
-      <input id="step" class="field" inputmode="decimal" value="${nf(st.step)}"></div>
-    <label class="row between" style="min-height:44px">Süre bitince sesli uyarı
-      <input id="sound" type="checkbox" switch ${st.sound ? 'checked' : ''} style="width:22px;height:22px;accent-color:var(--g1000)"></label>
+  <div class="group">
+    ${srow('timer', 'Dinlenme süresi', '', stp('rest', `${st.rest} sn`))}
+    ${srow('target', 'Haftalık hedef', '', stp('goal', `${st.goal} gün`))}
+    ${srow('bell', 'Ağırlık adımı', '', stp('step', `${nf(st.step)} kg`))}
+    <label class="srow"><span class="si">${ic('sound')}</span><div class="sl">Sesli uyarı<p class="small">Süre bitince bip sesi</p></div>
+      <input id="sound" class="tgl" type="checkbox" role="switch" ${st.sound ? 'checked' : ''}></label>
   </div>
-  <h2>Yedekleme</h2>
-  <div class="card stack">
-    <p class="small">Veriler sadece bu cihazda duruyor. Son yedek: ${st.lastBackup ? esc(fmtDate(st.lastBackup, { day: 'numeric', month: 'long', year: 'numeric' })) : 'hiç alınmadı'}.</p>
-    <div class="grid2"><button data-act="exportData">Yedekle</button><button data-act="importData">Geri Yükle…</button></div>
+  <h2>Görünüm</h2>
+  <div class="group"><div class="srow"><span class="si">${ic('sun')}</span><div class="sl">Tema</div>
+    <div class="seg" style="grid-template-columns:repeat(3,auto);border-radius:10px" role="group" aria-label="Tema">${[['auto', 'Sistem'], ['light', 'Açık'], ['dark', 'Koyu']].map(([k, name]) =>
+      `<button style="min-height:34px;padding:0 10px;font-size:14px" data-act="theme" data-arg="${k}" aria-pressed="${st.theme === k}">${name}</button>`).join('')}</div></div></div>
+  <h2>Keşfet</h2>
+  <div class="group">
+    ${link('flame', 'Seri ve rozetler', `${streak().cur} hafta seri · ${badges().filter(b => b.got).length} rozet`, 'href="#/streak"')}
+    ${link('list', 'Hareket kütüphanesi', `${Object.keys(EX).length} hareket, görsel ve talimatlar`, 'href="#/exercises"')}
   </div>
-  <h2>Hareketler</h2>
-  <div class="card"><ul class="list">${Object.entries(EX).map(([id, x]) => `<li><a href="#/ex/${id}" style="flex:1">${esc(x.n)}</a><span class="muted" aria-hidden="true">›</span></li>`).join('')}</ul></div>
-  <h2>Veri</h2>
-  <button class="danger full" data-act="wipe">Tüm Verileri Sil…</button>
-  <p class="small" style="margin-top:16px;text-align:center">${S.history.length} antrenman kayıtlı</p>`;
+  <h2>Veriler</h2>
+  <div class="group">
+    ${link('up', 'Yedekle', `Son yedek: ${st.lastBackup ? esc(fmtDate(st.lastBackup, { day: 'numeric', month: 'long', year: 'numeric' })) : 'hiç alınmadı'}`, 'data-act="exportData"')}
+    ${link('down', 'Geri yükle', 'Yedek dosyasından verileri geri getir', 'data-act="importData"')}
+    ${link('trash', 'Tüm verileri sil', `${n} antrenman, ${S.body.length} ölçü`, 'data-act="wipe"', 'danger')}
+  </div>
+  <p class="small" style="margin-top:10px">Veriler sadece bu cihazda duruyor. Yedeği iCloud Drive’a kaydetmen önerilir.</p>
+  <h2>Hakkında</h2>
+  <div class="group">
+    ${link('info', 'Hareket fotoğrafları', 'free-exercise-db · kamu malı', 'href="https://github.com/yuhonas/free-exercise-db" target="_blank" rel="noopener"')}
+    ${link('info', 'Kas haritası', 'react-body-highlighter · MIT', 'href="https://github.com/giavinh79/react-body-highlighter" target="_blank" rel="noopener"')}
+  </div>`;
+}
+
+function library() {
+  return `
+  <a class="btn ghost" href="#/settings" style="padding-left:0;margin-top:-8px;align-self:flex-start">‹ Ayarlar</a>
+  <h1 style="margin-top:4px">Hareketler</h1>
+  <div class="group" style="margin-top:16px">${Object.entries(EX).map(([id, x]) => `
+    <a class="srow" href="#/ex/${id}">${thumb(id, 44)}<div class="sl"><strong>${esc(x.n)}</strong><p class="small">${esc(x.m)}</p></div><span class="muted" aria-hidden="true">›</span></a>`).join('')}
+  </div>`;
 }
 
 // ---------- Router ----------
@@ -1082,6 +1215,7 @@ function render() {
   else if (page === 'body') html = body();
   else if (page === 'streak') { html = streakPage(); nav = '-'; }
   else if (page === 'settings') html = settings();
+  else if (page === 'exercises') { html = library(); nav = 'settings'; }
   else { html = home(); nav = ''; }
   const bare = (page === 'workout' && S.active) || page === 'summary';
   $('#app').innerHTML = html;
@@ -1110,9 +1244,6 @@ document.addEventListener('click', ev => {
 });
 document.addEventListener('change', ev => {
   const t = ev.target, num = () => parseFloat(t.value.trim().replace(',', '.'));
-  if (t.id === 'rest') { const v = Math.round(num()); if (v >= 5 && v <= 900) S.settings.rest = v; t.value = S.settings.rest; return save(); }
-  if (t.id === 'goal') { const v = Math.round(num()); if (v >= 1 && v <= 7) S.settings.goal = v; t.value = S.settings.goal; return save(); }
-  if (t.id === 'step') { const v = num(); if (v > 0 && v <= 50) S.settings.step = v; t.value = nf(S.settings.step); return save(); }
   if (t.id === 'sound') { S.settings.sound = t.checked; return save(); }
   if (t.id === 'note') { const v = t.value.trim(); if (v) S.notes[t.dataset.id] = v; else delete S.notes[t.dataset.id]; return save(); }
   if (!t.dataset.f || !S.active) return;
