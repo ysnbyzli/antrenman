@@ -56,7 +56,7 @@ function ConfirmSheet() {
     <dialog
       ref={ref}
       onClose={e => settle(e.currentTarget.returnValue === 'ok')}
-      className="sheet m-[auto_auto_0] w-full max-w-[520px] overscroll-contain rounded-t-[20px] bg-surface px-4 pt-6 pb-[calc(env(safe-area-inset-bottom)+16px)] text-fg"
+      className="sheet m-[auto_auto_0] w-full max-w-[520px] overscroll-contain rounded-t-[28px] bg-surface px-5 pt-6 pb-[calc(env(safe-area-inset-bottom)+16px)] text-fg"
     >
       {req && (
         <form method="dialog" className={cx(req.content ? 'text-center' : undefined)}>

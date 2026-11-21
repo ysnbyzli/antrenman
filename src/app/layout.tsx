@@ -22,13 +22,13 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#fafafa' },
-    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+    { media: '(prefers-color-scheme: light)', color: '#f2f2f7' },
+    { media: '(prefers-color-scheme: dark)', color: '#0b0b0b' },
   ],
 };
 
 // Runs before first paint so a forced theme doesn't flash the system one.
-const THEME_SCRIPT = `try{var t=JSON.parse(localStorage.getItem('fitness-v1')).settings.theme;if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}`;
+const THEME_SCRIPT = `try{var s=JSON.parse(localStorage.getItem('fitness-v1')).settings,t=s.look===2?s.theme:'dark'}catch(e){t='dark'}if(t==='light'||t==='dark')document.documentElement.dataset.theme=t`;
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (

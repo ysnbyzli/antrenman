@@ -18,7 +18,7 @@ function Row({ h }: { h: Workout }) {
   const d = new Date(h.end), sets = h.ex.reduce((n, e) => n + e.sets.length, 0), v = volume(h);
   return (
     <NavLink href={`/history/detail?id=${h.id}`} className={cx(row, rowTap)}>
-      <span className={cx('flex h-12 w-11 flex-none flex-col items-center justify-center rounded-xl leading-[1.15]', h.home ? 'bg-ok-bg text-ok' : 'bg-fg text-surface')}>
+      <span className={cx('flex h-12 w-11 flex-none flex-col items-center justify-center rounded-xl leading-[1.15]', h.home ? 'bg-ok-bg text-ok' : 'bg-fill-2 text-fg')}>
         <b className="num text-[17px]">{d.getDate()}</b>
         <span className="text-[11px] opacity-70">{d.toLocaleDateString('tr-TR', { weekday: 'short' })}</span>
       </span>
@@ -58,26 +58,26 @@ export default function HistoryPage() {
     <Page>
       <div className="flex items-center justify-between gap-2.5">
         <h1 className={h1}>Geçmiş</h1>
-        <NavLink href="/streak" className={btn({ className: 'min-h-10 rounded-full! px-3.5' })}><Icon name="cal" />Takvim</NavLink>
+        <NavLink href="/streak" className={btn({ className: 'min-h-11 bg-surface! px-4' })}><Icon name="cal" />Takvim</NavLink>
       </div>
-      <div className="mt-4 grid grid-cols-3 gap-2.5">
-        <Stat label="Bu ay" value={month.length} foot="antrenman" />
-        <Stat label="Süre" value={minutes >= 60 ? nf((minutes / 60).toFixed(1)) : minutes} unit={minutes >= 60 ? 'sa' : 'dk'} foot="bu ay" />
-        <Stat label="Kaldırılan" value={vol >= 1000 ? nf((vol / 1000).toFixed(1)) : Math.round(vol)} unit={vol >= 1000 ? 'ton' : 'kg'} foot="bu ay" />
+      <div className="mt-5 grid grid-cols-3 gap-2">
+        <Stat stack icon="calF" tone="info" label="Bu ay" value={month.length} foot="antrenman" />
+        <Stat stack icon="clockF" tone="cyan" label="Süre" value={minutes >= 60 ? nf((minutes / 60).toFixed(1)) : minutes} unit={minutes >= 60 ? 'sa' : 'dk'} foot="bu ay" />
+        <Stat stack icon="dumbbellF" tone="purple" label="Kaldırılan" value={vol >= 1000 ? nf((vol / 1000).toFixed(1)) : Math.round(vol)} unit={vol >= 1000 ? 'ton' : 'kg'} foot="bu ay" />
       </div>
       <div role="group" aria-label="Filtre" className="mt-4 flex gap-2">
         {FILTERS.map(([k, name]) => (
           <button key={k} type="button" aria-pressed={filter === k} onClick={() => setFilter(k)}
-            className={cx('min-h-9 cursor-pointer rounded-full border px-3.5 text-sm font-[550]', filter === k ? 'border-fg bg-fg text-surface' : 'border-line bg-surface')}>
+            className={cx('min-h-10 cursor-pointer rounded-full border px-4 text-sm font-semibold', filter === k ? 'border-fg bg-fg text-page' : 'border-transparent bg-surface text-muted')}>
             {name}
           </button>
         ))}
       </div>
       {groups.length ? groups.map(g => (
         <section key={g.k}>
-          <H2 className="flex items-center justify-between gap-2.5">
+          <H2 className="flex items-baseline justify-between gap-2.5">
             <span>{new Date(g.t).toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })}</span>
-            <span className="num font-normal tracking-normal normal-case">{g.items.length} antrenman · {dur(g.items.reduce((n, h) => n + h.end - h.start, 0))}</span>
+            <span className="num text-sm font-normal text-muted">{g.items.length} antrenman · {dur(g.items.reduce((n, h) => n + h.end - h.start, 0))}</span>
           </H2>
           <Group>{g.items.map(h => <Row key={h.id} h={h} />)}</Group>
         </section>

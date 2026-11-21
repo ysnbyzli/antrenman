@@ -8,7 +8,7 @@ export default function ExercisesPage() {
   return (
     <Page>
       <BackLink href="/settings">Ayarlar</BackLink>
-      <h1 className={cx(h1, 'mt-1')}>Hareketler</h1>
+      <h1 className={cx(h1, 'mt-4')}>Hareketler</h1>
       <Group className="mt-4">
         {Object.entries(EX).map(([id, x]) => (
           <NavLink key={id} href={`/ex/${id}`} className={cx(row, rowTap)}>

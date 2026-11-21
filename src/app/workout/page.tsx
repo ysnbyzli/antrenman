@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useRef, useState, type TouchEvent } from 'react';
+import { Icon } from '@/components/icons';
 import { Dock, NavLink, Page, useGo } from '@/components/shell';
-import { Badge, Button, Chevron, Stepper, card, h3, small } from '@/components/ui';
+import { Badge, Button, Chevron, Stepper, card, circle, h3, small } from '@/components/ui';
 import { Thumb } from '@/components/visuals';
 import {
   addSet, applyBump, completeSet, curIdx, delSet, discardWorkout, finishWorkout, goTo, restAdd, restEnd, setField, skipExercise, stepField, undoSet,
@@ -103,15 +104,15 @@ export default function WorkoutPage() {
     <Page bare>
       <div className="flex-1 pb-5" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         <div className="-mt-1 mb-2 flex items-center justify-between">
-          <NavLink href="/" aria-label="Ana sayfaya dön, antrenman sürer" className="grid size-11 place-items-center rounded-full border border-line bg-surface text-[22px] no-underline active:bg-fill-2">‹</NavLink>
+          <NavLink href="/" aria-label="Ana sayfaya dön, antrenman sürer" className={circle}><Icon name="back" className="size-6 stroke-[2.2]" /></NavLink>
           <div className="text-center">
             <div className={small}>{a.name} · {a.cur + 1}/{a.ex.length}</div>
             <div className="num text-[28px] leading-[1.1] font-semibold tracking-[-.02em]">{clock(now - a.start)}</div>
           </div>
-          <button type="button" onClick={finish} className="min-h-10 cursor-pointer rounded-full bg-fg px-[18px] font-[550] text-surface active:bg-muted">Bitir</button>
+          <button type="button" onClick={finish} className="min-h-11 cursor-pointer rounded-full bg-fg px-5 font-semibold text-page active:opacity-85">Bitir</button>
         </div>
 
-        <div ref={strip} data-noswipe className="relative -mx-4 mb-2.5 flex gap-3 overflow-x-auto px-4 pt-1.5 pb-2.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div ref={strip} data-noswipe className="relative -mx-5 mb-2.5 flex gap-3 overflow-x-auto px-5 pt-1.5 pb-2.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {a.ex.map((x, i) => {
             const d = x.sets.filter(y => y.done).length, all = d > 0 && d === x.sets.length, here = i === a.cur;
             return (
@@ -140,7 +141,7 @@ export default function WorkoutPage() {
             {e.skipped ? <Badge>Atlandı</Badge> : allDone && <Badge ok>✓ Tamam</Badge>}
           </div>
           {up > 0 && (
-            <button type="button" onClick={() => applyBump(up)} className="mt-2.5 min-h-9 cursor-pointer rounded-full bg-info-bg px-3 text-sm font-[550] text-info">
+            <button type="button" onClick={() => applyBump(up)} className="mt-3 min-h-10 cursor-pointer rounded-full bg-info-bg px-4 text-sm font-semibold text-info">
               Geçen sefer hedef tamam · {nf(up)}&nbsp;kg dene
             </button>
           )}
@@ -152,7 +153,7 @@ export default function WorkoutPage() {
                 <div key={i} className="contents">
                   {since > 0 && <div className="num -my-1 text-center text-xs text-muted">{clock(since)} sonra</div>}
                   {i === ci ? (
-                    <div className="animate-up rounded-2xl border border-fg bg-surface px-3.5 pt-3 pb-3.5 shadow-card motion-reduce:animate-none">
+                    <div className="animate-up rounded-3xl border border-line-2 bg-surface p-4 motion-reduce:animate-none">
                       <div className="flex items-center justify-between gap-2.5">
                         <strong>Set {i + 1}</strong>
                         {x.done ? <button type="button" className="min-h-8 cursor-pointer font-[550] text-muted" onClick={() => { undoSet(i); setSel(null); }}>Tamamlanmadı yap</button>
@@ -172,9 +173,9 @@ export default function WorkoutPage() {
                   ) : (
                     <button type="button" onClick={() => setSel(i)}
                       aria-label={`Set ${i + 1}: ${setText(x, t.unit)}, ${x.done ? 'tamamlandı' : 'bekliyor'}. Düzenle`}
-                      className={cx('num grid min-h-14 cursor-pointer items-center gap-2 rounded-[14px] border px-3 py-1.5 text-[17px] font-medium',
+                      className={cx('num grid min-h-15 cursor-pointer items-center gap-2 rounded-[20px] border px-4 py-1.5 text-[17px] font-medium',
                         a.home ? 'grid-cols-[24px_1fr_24px]' : 'grid-cols-[24px_1fr_1fr_24px]',
-                        x.done ? 'border-ok-line bg-ok-bg text-fg' : 'border-line bg-surface text-muted')}>
+                        x.done ? 'border-ok-line bg-ok-bg text-fg' : 'border-transparent bg-surface text-muted')}>
                       <span className="text-left text-muted">{i + 1}</span>
                       {!a.home && <Pill done={!!x.done}>{hasKg(x) ? nf(x.kg) : '–'}<small className="font-sans text-xs font-normal text-muted">kg</small></Pill>}
                       <Pill done={!!x.done}>{x.reps}<small className="font-sans text-xs font-normal text-muted">{t.unit === 'sn' ? 'sn' : 'tekrar'}</small></Pill>
@@ -218,7 +219,7 @@ export default function WorkoutPage() {
             </div>
             <span className="flex gap-2.5">
               {[['+30 sn', restAdd], ['Geç', restEnd]].map(([label, run]) => (
-                <button key={label as string} type="button" onClick={run as () => void} className="min-h-9 cursor-pointer rounded-[10px] border border-current px-3 text-sm font-[550]">{label as string}</button>
+                <button key={label as string} type="button" onClick={run as () => void} className="min-h-10 cursor-pointer rounded-full bg-info-bg px-4 text-sm font-semibold">{label as string}</button>
               ))}
             </span>
           </div>

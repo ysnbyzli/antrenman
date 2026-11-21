@@ -22,7 +22,7 @@ function FigSvg({ fig, label, className }: { fig: Fig; label?: string; className
 
 /** Square thumbnail of an exercise (end position). */
 export function Thumb({ id, size = 64, className }: { id: string; size?: number; className?: string }) {
-  const cls = cx('block flex-none overflow-hidden rounded-[10px] border border-line bg-fill object-cover', className);
+  const cls = cx('block flex-none overflow-hidden rounded-xl bg-fill-2 object-cover', className);
   const style = { width: size, height: size };
   return PICS.has(id)
     ? <Image className={cls} style={style} src={asset(`/img/${id}-1.jpg`)} alt="" width={size} height={size} />
@@ -34,7 +34,7 @@ export function ExercisePics({ id }: { id: string }) {
   const name = EX[id].n, frame = 'absolute inset-0 size-full object-cover motion-reduce:static';
   const second = cx(frame, 'animate-flip motion-reduce:animate-none');
   return (
-    <div className="relative mt-4 aspect-[3/2] overflow-hidden rounded-xl border border-line bg-fill motion-reduce:grid motion-reduce:aspect-[3/1] motion-reduce:grid-cols-2">
+    <div className="relative mt-4 aspect-[3/2] overflow-hidden rounded-3xl bg-fill motion-reduce:grid motion-reduce:aspect-[3/1] motion-reduce:grid-cols-2">
       {PICS.has(id) ? (
         <>
           <Image className={frame} src={asset(`/img/${id}-0.jpg`)} alt={`${name}: başlangıç pozisyonu`} width={600} height={400} priority />

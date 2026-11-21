@@ -4,14 +4,29 @@ import { useSearchParams } from 'next/navigation';
 import { deleteWorkout } from '@/lib/actions';
 import { cx } from '@/lib/cx';
 import { ask } from '@/lib/dialog';
-import { badges, streak, volume } from '@/lib/domain';
-import { fmtDate, fmtTime, setText } from '@/lib/format';
+import { badges, streak, topKg, volume } from '@/lib/domain';
+import { dur, fmtDate, kgs, nf, setText } from '@/lib/format';
 import { useStore } from '@/lib/store';
-import { Icon } from './icons';
-import { BadgeTile } from './medal';
+import { Icon, iconShapes } from './icons';
+import { BadgeTile, Hex, Medal } from './medal';
 import { Confetti } from './progress';
 import { BackLink, Dock, NavLink, Page, useGo } from './shell';
-import { Badge, Card, Chevron, H2, Stat, btn, card, h1, small } from './ui';
+import { Badge, Button, Card, Chevron, H2, Stat, btn, card, h1, small } from './ui';
+
+/** "Yeni rekor" sticker: trophy, dumbbell and a tilted outlined label. */
+function RecordSticker() {
+  const label = { textAnchor: 'middle' as const, fontSize: 17, fontWeight: 900, fontStyle: 'italic', fill: '#fff', stroke: '#e63e00', strokeWidth: 5, paintOrder: 'stroke', strokeLinejoin: 'round' as const };
+  return (
+    <svg viewBox="0 0 124 100" className="w-[112px] flex-none" aria-hidden="true">
+      <g transform="rotate(-8 62 50)">
+        <g transform="translate(40 0) scale(2.1)" fill="#f5a800" fillRule="evenodd">{iconShapes('trophyF')}</g>
+        <g transform="translate(4 30) rotate(-22 22 22) scale(1.8)" fill="#ff5a1f">{iconShapes('dumbbellF')}</g>
+        <text x="66" y="72" {...label} className="font-sans">YENİ</text>
+        <text x="68" y="92" {...label} className="font-sans">REKOR</text>
+      </g>
+    </svg>
+  );
+}
 
 export function WorkoutDetail({ summary }: { summary?: boolean }) {
   const s = useStore(), q = useSearchParams(), go = useGo();
@@ -26,9 +41,14 @@ export function WorkoutDetail({ summary }: { summary?: boolean }) {
       </Page>
     );
   }
-  const sets = h.ex.reduce((n, e) => n + e.sets.length, 0), vol = volume(h);
+  const sets = h.ex.reduce((n, e) => n + e.sets.length, 0), vol = volume(h), done = h.ex.filter(e => e.sets.length).length;
   const st = streak(s.history, s.settings.goal), nth = s.history.filter(x => !x.home).length;
   const earned = badges(s.history, s.settings.goal).filter(b => h.badges?.includes(b.id));
+  const records = h.ex.filter(e => h.prs?.includes(e.id)).map(e => {
+    const best = e.sets.reduce((a, b) => (Number(b.kg) > Number(a.kg) ? b : a));
+    return { id: e.id, name: e.name, text: `${nf(topKg(e.sets))} kg × ${best.reps}` };
+  });
+  const date = fmtDate(h.end, { day: 'numeric', month: 'short', year: 'numeric' });
   const rise = summary ? 'animate-rise motion-reduce:animate-none' : '';
 
   const remove = async () => {
@@ -36,48 +56,75 @@ export function WorkoutDetail({ summary }: { summary?: boolean }) {
     go('/history');
     deleteWorkout(h.id);
   };
+  const share = async () => {
+    const text = [`${h.name} · ${date}`, `Süre ${dur(h.end - h.start)} · ${done} hareket · ${sets} set${vol ? ` · ${kgs(vol)}` : ''}`,
+      ...records.map(r => `Yeni rekor: ${r.name} ${r.text}`)].join('\n');
+    try {
+      if (navigator.share) await navigator.share({ text });
+      else { await navigator.clipboard.writeText(text); void ask('Özet kopyalandı', 'Metni istediğin yere yapıştırabilirsin.', 'Tamam', { cancel: false }); }
+    } catch {} // sharing cancelled
+  };
 
   return (
-    <Page bare={summary}>
-      <div className="flex-1 pb-5">
+    <Page bare={summary} glow>
+      <div className="flex-1 pb-6">
         {summary && q.get('new') && <Confetti />}
-        {!summary && <BackLink href="/history">Geçmiş</BackLink>}
-        <h1 className={cx(h1, summary ? 'mt-6' : 'mt-1', rise)}>{summary ? 'Antrenman tamam ✓' : h.name}</h1>
-        <p className={cx(small, 'mt-1')}>{summary && `${h.name} · `}{fmtDate(h.end)} · {fmtTime(h.start)}–{fmtTime(h.end)}</p>
+        <BackLink href={summary ? '/' : '/history'}>{summary ? 'Ana Sayfa' : 'Geçmiş'}</BackLink>
+
+        <div className="mt-2 flex flex-col items-center text-center">
+          <div className={summary ? 'animate-pop motion-reduce:animate-none' : undefined}>
+            {earned[0] ? <Medal b={earned[0]} size={132} /> : <Hex tier={h.home ? 'p' : 'b'} icon="trophyF" size={132} />}
+          </div>
+          <h1 className={cx(h1, 'mt-5 text-2xl', rise)}>{summary ? 'Antrenman Tamam' : h.name}</h1>
+          <p className="mt-1.5 flex gap-4 text-muted">{summary && <span>{h.name}</span>}<span>{date}</span></p>
+        </div>
+
+        <div className="mt-7 grid grid-cols-2 gap-2">
+          <Stat className={cx(rise, '[animation-delay:.05s]')} icon="clockF" tone="info" label="Süre" value={dur(h.end - h.start)} />
+          <Stat className={cx(rise, '[animation-delay:.1s]')} icon="dumbbellF" tone="purple" label="Kaldırılan" value={vol ? kgs(vol) : '—'} />
+          <Stat className={cx(rise, '[animation-delay:.15s]')} icon="figureF" tone="cyan" label="Hareket" value={<>{done}<span className="text-sm font-normal text-muted">/{h.ex.length}</span></>} />
+          <Stat className={cx(rise, '[animation-delay:.2s]')} icon="flameF" tone="flame" label="Toplam set" value={sets} />
+        </div>
+
+        {records.length > 0 && (
+          <Card className="mt-2 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2.5 font-semibold"><Icon name="starF" className="text-flame" />Yeni rekor</div>
+              <ul className="mt-3 grid gap-2">
+                {records.map(r => <li key={r.id}><p className={small}>{r.name}</p><p className="num font-medium">{r.text}</p></li>)}
+              </ul>
+            </div>
+            <RecordSticker />
+          </Card>
+        )}
 
         {summary && !h.home && (
-          <NavLink href="/streak" className={cx(card, 'mt-3.5 flex items-center gap-3 no-underline active:bg-fill')}>
-            <Icon name="flame" className={cx('size-7', st.week >= st.goal && 'fill-flame text-flame')} />
-            <div className="flex-1">
-              <strong>{st.week >= st.goal ? `Haftalık hedef tamam · ${st.cur} hafta seri` : `Bu hafta ${st.week}/${st.goal}`}</strong>
+          <NavLink href="/streak" className={cx(card, 'mt-2 flex items-center gap-3.5 no-underline active:bg-fill')}>
+            <Icon name="flameF" className={cx('size-8', st.week >= st.goal ? 'text-flame' : 'text-line-2')} />
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold">{st.week >= st.goal ? `Haftalık hedef tamam · ${st.cur} hafta seri` : `Bu hafta ${st.week}/${st.goal}`}</p>
               <p className={small}>{nth}. antrenmanın{st.week < st.goal && ` · seri için ${st.goal - st.week} antrenman daha`}</p>
             </div>
             <Chevron />
           </NavLink>
         )}
-        {earned.length > 0 && (
-          <>
-            <p className={cx(small, 'mt-3.5 mb-2')}>{summary ? 'Yeni rozet kazandın' : 'Bu antrenmanda kazanılan rozetler'}</p>
-            <div className="grid grid-cols-3 gap-2.5">
-              {earned.map(b => <BadgeTile key={b.id} b={b} earnedAt={h.end} className={summary ? 'animate-pop [animation-delay:.3s] motion-reduce:animate-none' : undefined} />)}
-            </div>
-          </>
-        )}
 
-        <div className="mt-4 grid grid-cols-3 gap-2.5">
-          <Stat className={cx(rise, '[animation-delay:.06s]')} label="Süre" value={Math.max(1, Math.round((h.end - h.start) / 60000))} unit="dk" />
-          <Stat className={cx(rise, '[animation-delay:.12s]')} label="Set" value={sets} />
-          <Stat className={cx(rise, '[animation-delay:.18s]')} label="Hareket" value={<>{h.ex.filter(e => e.sets.length).length}<span className="text-sm font-normal text-muted">/{h.ex.length}</span></>} />
-        </div>
-        {vol > 0 && <p className={cx(small, 'mt-2.5')}>Toplam kaldırılan: <span className="num">{Math.round(vol).toLocaleString('tr-TR')}&nbsp;kg</span></p>}
+        {earned.length > 0 && (
+          <Card className="mt-2">
+            <p className="font-semibold">{summary ? 'Yeni rozet kazandın' : 'Bu antrenmanda kazanılan rozetler'}</p>
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              {earned.map(b => <BadgeTile key={b.id} b={b} earnedAt={h.end} />)}
+            </div>
+          </Card>
+        )}
 
         <H2>Hareketler</H2>
         <Card>
-          <ul className="divide-y divide-fill-2">
+          <ul className="divide-y divide-line">
             {h.ex.map(e => (
-              <li key={e.id} className="flex items-baseline justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
+              <li key={e.id} className="flex items-baseline justify-between gap-3 py-3 first:pt-0 last:pb-0">
                 <span>
-                  <NavLink href={`/ex/${e.id}`} className="no-underline">{e.name}</NavLink>
+                  <NavLink href={`/ex/${e.id}`} className="font-medium no-underline">{e.name}</NavLink>
                   {h.prs?.includes(e.id) && <Badge ok className="ml-1.5">Rekor</Badge>}
                 </span>
                 <span className={cx('num text-right text-sm whitespace-nowrap', !e.sets.length && 'text-muted')}>
@@ -87,9 +134,16 @@ export function WorkoutDetail({ summary }: { summary?: boolean }) {
             ))}
           </ul>
         </Card>
-        {!summary && <button type="button" onClick={remove} className="mt-5 min-h-11 w-full cursor-pointer font-[550] text-danger">Bu Kaydı Sil…</button>}
+        {!summary && <button type="button" onClick={remove} className="mt-5 min-h-12 w-full cursor-pointer font-semibold text-danger">Bu Kaydı Sil…</button>}
       </div>
-      {summary && <Dock><NavLink href="/" className={btn({ variant: 'primary', big: true })}>Tamam</NavLink></Dock>}
+      {summary && (
+        <Dock>
+          <div className="grid grid-cols-2 gap-3">
+            <NavLink href={`/history/detail?id=${h.id}`} className={btn({ big: true })}>Kaydı Gör</NavLink>
+            <Button variant="primary" big onClick={share}>Özeti Paylaş</Button>
+          </div>
+        </Dock>
+      )}
     </Page>
   );
 }

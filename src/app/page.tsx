@@ -20,7 +20,7 @@ const greeting = (hr: number) => (hr < 5 ? 'İyi geceler' : hr < 12 ? 'Günaydı
 export default function HomePage() {
   const s = useStore(), now = useNow(), go = useGo();
   const [pick, setPick] = useState<PlanKey | null>(null); // plan chosen by hand instead of the suggestion
-  if (!s) return <Page>{null}</Page>;
+  if (!s) return <Page glow>{null}</Page>;
 
   const a = s.active, H = s.history, st = streak(H, s.settings.goal), left = Math.max(0, st.goal - st.week);
   const sug = suggested(H, new Date(now)), k = pick || sug, p = PLANS[k];
@@ -41,21 +41,21 @@ export default function HomePage() {
   const backup = () => exportData().catch(err => ask('Yedek oluşturulamadı', (err as Error).message, 'Tamam', { cancel: false }));
 
   return (
-    <Page>
+    <Page glow>
       <div className="flex items-center justify-between gap-2.5">
         <div>
           <p className={small}>{fmtDate(now)}</p>
           <h1 className={cx(h1, 'mt-0.5')}>{greeting(new Date(now).getHours())}</h1>
         </div>
         <NavLink href="/streak" aria-label={`Seri: ${st.cur} hafta. Seri ve rozetleri aç`}
-          className={cx('flex min-h-11 items-center gap-1 rounded-full border border-line bg-surface pr-3.5 pl-2.5 text-[17px] font-semibold no-underline shadow-card transition-transform duration-150 ease-out-strong active:scale-[.96] motion-reduce:active:scale-100', st.cur ? 'text-fg' : 'text-muted')}>
-          <Icon name="flame" className={st.cur ? 'fill-flame text-flame' : undefined} />
+          className={cx('flex min-h-11 items-center gap-1.5 rounded-full bg-surface pr-4 pl-3 text-[17px] font-semibold no-underline transition-transform duration-150 ease-out-strong active:scale-[.96] motion-reduce:active:scale-100', st.cur ? 'text-fg' : 'text-muted')}>
+          <Icon name="flameF" className={cx('size-[22px]', st.cur ? 'text-flame' : 'text-line-2')} />
           <span className="num">{st.cur}</span>
         </NavLink>
       </div>
 
       {needInstall && (
-        <Card className="mt-4">
+        <Card className="mt-5">
           <div className="flex items-center justify-between">
             <strong>Ana ekrana ekle</strong>
             <button type="button" className="grid size-8 cursor-pointer place-items-center text-xl text-muted" aria-label="Kapat" onClick={hideInstall}>×</button>
@@ -64,7 +64,7 @@ export default function HomePage() {
         </Card>
       )}
 
-      <NavLink href="/streak" className={cx(card, 'block no-underline active:bg-fill', needInstall ? 'mt-2.5' : 'mt-4')}>
+      <NavLink href="/streak" className={cx(card, 'block no-underline active:bg-fill', needInstall ? 'mt-2' : 'mt-5')}>
         <div className="flex items-center justify-between gap-3">
           <div>
             <div className="num text-[40px] leading-none font-[650] tracking-[-.04em]">
@@ -74,8 +74,8 @@ export default function HomePage() {
           </div>
           <WeekPills history={H} now={now} />
         </div>
-        <div className="mt-3.5 flex items-center gap-2 border-t border-fill-2 pt-3 text-sm text-muted">
-          <Icon name="flame" className={st.week >= st.goal ? 'fill-flame text-flame' : undefined} />
+        <div className="mt-3.5 flex items-center gap-2 border-t border-line pt-3 text-sm text-muted">
+          <Icon name="flameF" className={st.week >= st.goal ? 'text-flame' : 'text-line-2'} />
           <span className="flex-1">
             {st.week >= st.goal ? `Haftalık hedef tamam · ${st.cur} hafta seri` : `${st.cur ? 'Seriyi korumak' : 'Seriyi başlatmak'} için ${left} antrenman daha`}
           </span>
@@ -85,7 +85,7 @@ export default function HomePage() {
 
       {/* Today's workout: photo of the first exercise behind a dark gradient, so text is white in both themes. */}
       <div
-        className="mt-3 flex min-h-[300px] flex-col justify-between rounded-3xl bg-[#151515] bg-cover bg-center px-4 pt-3.5 pb-4 text-white"
+        className="mt-2 flex min-h-[300px] flex-col justify-between rounded-[28px] bg-[#151515] bg-cover bg-center px-4 pt-3.5 pb-4 text-white"
         style={{ backgroundImage: `linear-gradient(180deg,rgba(0,0,0,.5),rgba(0,0,0,.12) 42%,rgba(0,0,0,.9))${cover ? `,url(${asset(`/img/${cover}-1.jpg`)})` : ''}` }}
       >
         <div className="flex items-center justify-between gap-2.5">
@@ -125,7 +125,7 @@ export default function HomePage() {
         <>
           <H2>Hareketler</H2>
           <Card>
-            <ul className="divide-y divide-fill-2">
+            <ul className="divide-y divide-line">
               {p.items.map(([id, sets, reps, unit = '', max]) => {
                 const kg = p.home ? 0 : topKg(lastSets(H, id));
                 return (
@@ -145,7 +145,7 @@ export default function HomePage() {
         </>
       )}
 
-      <div className="mt-3 grid grid-cols-2 gap-2.5">
+      <div className="mt-2 grid grid-cols-2 gap-2">
         <NavLink href="/history" className={cx(card, 'no-underline active:bg-fill')}>
           <p className={small}>Son antrenman</p>
           <div className="text-[17px] font-semibold">{last ? fmtDate(last.end, { day: 'numeric', month: 'short' }) : '—'}</div>
@@ -159,7 +159,7 @@ export default function HomePage() {
       </div>
 
       {stale && H.length > 0 && (
-        <Card className="mt-2.5 flex items-center justify-between gap-2.5">
+        <Card className="mt-2 flex items-center justify-between gap-2.5">
           <p className={small}>2 haftadır yedek alınmadı.</p>
           <Button onClick={backup}>Yedekle</Button>
         </Card>

@@ -21,6 +21,18 @@ const ICONS = {
   history: <><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></>,
   chart: <><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></>,
   sliders: <><path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h8M16 18h4"/><circle cx="16" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="14" cy="18" r="2"/></>,
+  // solid glyphs (names end in F): drawn filled, used for coloured stat icons and medals
+  clockF: <path fillRule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 5a1 1 0 1 0-2 0v5c0 .27.1.52.3.7l3 3a1 1 0 0 0 1.4-1.4L13 11.58V7Z" />,
+  dumbbellF: <><rect x="1" y="8.5" width="3.5" height="7" rx="1.5" /><rect x="5.25" y="4.5" width="4.75" height="15" rx="2" /><rect x="10" y="10" width="4" height="4" /><rect x="14" y="4.5" width="4.75" height="15" rx="2" /><rect x="19.5" y="8.5" width="3.5" height="7" rx="1.5" /></>,
+  flameF: <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z" />,
+  stackF: <><rect x="3" y="4" width="18" height="4" rx="2" /><rect x="3" y="10" width="18" height="4" rx="2" /><rect x="3" y="16" width="18" height="4" rx="2" /></>,
+  figureF: <><circle cx="12" cy="4.5" r="2.5" /><path d="M7 9.5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2V14a1 1 0 0 1-2 0v-3h-.5v10a1.25 1.25 0 0 1-2.5 0v-5 5a1.25 1.25 0 0 1-2.5 0V11H9v3a1 1 0 0 1-2 0V9.5Z" /></>,
+  trophyF: <path fillRule="evenodd" d="M7 3h10v2h3v2a4 4 0 0 1-3.2 3.92A5 5 0 0 1 13 13.9V17h3v3H8v-3h3v-3.1a5 5 0 0 1-3.8-2.98A4 4 0 0 1 4 7V5h3V3Zm0 4H6a2 2 0 0 0 1 1.73V7Zm10 0v1.73A2 2 0 0 0 18 7h-1Z" />,
+  calF: <path fillRule="evenodd" d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3V3a1 1 0 0 1 1-1Zm-2 8v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8H5Z" />,
+  scaleF: <path fillRule="evenodd" d="M6 3h12a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Zm6 3.5a5 5 0 0 0-4.6 3.05.75.75 0 0 0 .69 1.05h7.82a.75.75 0 0 0 .69-1.05A5 5 0 0 0 12 6.5Z" />,
+  starF: <path d="m12 2.5 2.9 6 6.6 1-4.8 4.6 1.1 6.6L12 17.6l-5.8 3.1 1.1-6.6L2.5 9.5l6.6-1z" />,
+  homeF: <path d="M11.3 2.6a1 1 0 0 1 1.4 0l8 7.2a1 1 0 0 1 .3.7V20a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H4.5A1.5 1.5 0 0 1 3 20v-9.5a1 1 0 0 1 .3-.7l8-7.2Z" />,
+  back: <path d="m14.5 6-6 6 6 6" />,
 } satisfies Record<string, ReactNode>;
 
 export type IconName = keyof typeof ICONS;
@@ -28,11 +40,13 @@ export type IconName = keyof typeof ICONS;
 /** Raw shapes of an icon, for drawing inside another <svg>. */
 export const iconShapes = (name: IconName) => ICONS[name];
 
-/** 24px line icon. Colour follows `currentColor`; outlined unless a `fill-*` class is passed. */
+/** 24px icon. Line icons follow `currentColor` as a stroke; names ending in F are solid glyphs filled with it. */
 export function Icon({ name, className }: { name: IconName; className?: string }) {
+  const solid = name.endsWith('F');
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true"
-      className={cx('size-5 flex-none stroke-current stroke-[1.8] [stroke-linecap:round] [stroke-linejoin:round]', !/\bfill-/.test(className ?? '') && 'fill-none', className)}>
+      className={cx('size-5 flex-none', solid ? 'fill-current' : 'stroke-current stroke-[1.8] [stroke-linecap:round] [stroke-linejoin:round]',
+        !solid && !/\bfill-/.test(className ?? '') && 'fill-none', className)}>
       {ICONS[name]}
     </svg>
   );

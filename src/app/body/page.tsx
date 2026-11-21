@@ -12,7 +12,7 @@ import { useNow } from '@/lib/hooks';
 import { useStore } from '@/lib/store';
 import type { BodyEntry } from '@/lib/types';
 
-const field = 'num min-h-11 w-24 rounded-[10px] border border-line bg-fill text-center text-[17px] font-medium text-fg';
+const field = 'num min-h-11 w-24 rounded-full bg-fill-2 text-center text-[17px] font-medium text-fg';
 
 /** Latest value, change since the first entry, and a sparkline. */
 function Trend({ entries, k, label, unit }: { entries: BodyEntry[]; k: 'kg' | 'waist'; label: string; unit: string }) {
@@ -53,7 +53,7 @@ export default function BodyPage() {
   return (
     <Page>
       <h1 className={h1}>Ölçüler</h1>
-      <div className="mt-4 grid grid-cols-2 gap-2.5">
+      <div className="mt-5 grid grid-cols-2 gap-2">
         <Trend entries={s.body} k="kg" label="Kilo" unit="kg" />
         <Trend entries={s.body} k="waist" label="Bel çevresi" unit="cm" />
       </div>
@@ -76,7 +76,7 @@ export default function BodyPage() {
       <H2>Kayıtlar</H2>
       {s.body.length ? (
         <Card>
-          <ul className="divide-y divide-fill-2">
+          <ul className="divide-y divide-line">
             {s.body.map(x => (
               <li key={x.t} className="flex items-center justify-between gap-3 py-1.5 first:pt-0 last:pb-0">
                 <span>{fmtDate(x.t, { day: 'numeric', month: 'short', year: 'numeric' })}</span>

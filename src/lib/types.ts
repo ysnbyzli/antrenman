@@ -19,7 +19,7 @@ export interface Workout {
 }
 export interface BodyEntry { t: number; kg: number | null; waist: number | null }
 export interface Settings {
-  rest: number; step: number; goal: number; sound: boolean; theme: Theme; lastBackup: number; hideInstall?: boolean;
+  rest: number; step: number; goal: number; sound: boolean; theme: Theme; lastBackup: number; hideInstall?: boolean; look?: number;
 }
 export interface State {
   active: Active | null; history: Workout[]; notes: Record<string, string>; body: BodyEntry[]; settings: Settings;

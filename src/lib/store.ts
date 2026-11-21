@@ -11,7 +11,8 @@ export const norm = (d: Partial<State>): State => ({
   history: d.history || [],
   notes: d.notes || {},
   body: d.body || [],
-  settings: { rest: 90, step: 2.5, goal: 3, sound: true, theme: 'auto', lastBackup: 0, ...d.settings },
+  // look 2 = the dark-first redesign: saves from before it switch to dark once, after that the choice is the user's
+  settings: { rest: 90, step: 2.5, goal: 3, sound: true, lastBackup: 0, ...d.settings, theme: d.settings?.look === 2 ? d.settings.theme : 'dark', look: 2 },
 });
 
 function read(): State {
@@ -49,7 +50,7 @@ export const useStore = () => useSyncExternalStore(store.subscribe, store.get, (
 
 /** Theme is system by default and can be forced; mirrored on <html data-theme> for the CSS tokens. */
 export function applyTheme(th: Theme) {
-  const bg = { light: '#fafafa', dark: '#000000' };
+  const bg = { light: '#f2f2f7', dark: '#0b0b0b' };
   if (th === 'auto') delete document.documentElement.dataset.theme;
   else document.documentElement.dataset.theme = th;
   document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]').forEach(m => {

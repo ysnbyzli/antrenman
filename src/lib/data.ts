@@ -89,6 +89,8 @@ export const BADGES: [id: string, name: string, desc: string, k: BadgeKind, need
   ['h5', 'Ev Disiplini', '5 ev rutini tamamla', 'home', 5, 'b', '5'], ['h25', 'Ev Ustası', '25 ev rutini tamamla', 'home', 25, 's', '25'],
 ];
 export const GROUP: Record<BadgeKind, [name: string, icon: IconName]> = { n: ['Antrenman', 'bell'], s: ['Hafta serisi', 'flame'], pr: ['Rekor', 'star'], vol: ['Toplam ağırlık', 'ton'], home: ['Ev rutini', 'home'] };
-// Medal metals per tier (bronze, silver, gold, blue, onyx): [light, mid, dark] and the text colour on top
-export const TIER: Record<Tier, [string, string, string]> = { b: ['#f0c39c', '#b9774a', '#70401f'], s: ['#ffffff', '#b4bac4', '#6d7480'], g: ['#fff0a8', '#eeb02a', '#9a6200'], p: ['#b6f0ff', '#3b9dff', '#173fc4'], o: ['#6b6b6b', '#1f1f1f', '#000000'] };
-export const TXT: Record<Tier, string> = { b: '#fff', s: '#22252b', g: '#4a2e00', p: '#fff', o: '#ff8a3d' };
+// Badge colours per tier, lowest to highest: orange, silver, gold, blue, purple. [light, mid, dark] for the gradient.
+export const TIER: Record<Tier, [string, string, string]> = {
+  b: ['#ffa066', '#ff5a1f', '#e63e00'], s: ['#d9dee6', '#8f99a8', '#5f6878'], g: ['#ffdc73', '#f5a800', '#cc7a00'],
+  p: ['#7fc6ff', '#1f8fff', '#0b5fd9'], o: ['#b9a0ff', '#7c5cff', '#5933e0'],
+};

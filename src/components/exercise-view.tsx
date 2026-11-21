@@ -6,8 +6,9 @@ import { EX } from '@/lib/data';
 import { topKg } from '@/lib/domain';
 import { fmtDate, nf, setText } from '@/lib/format';
 import { useStore } from '@/lib/store';
+import { Icon } from './icons';
 import { Page } from './shell';
-import { Card, H2, btn, h1, small } from './ui';
+import { Card, H2, btn, circle, h1, small } from './ui';
 import { ExercisePics, MuscleMap, Spark } from './visuals';
 
 export function ExerciseView({ id }: { id: string }) {
@@ -18,8 +19,8 @@ export function ExerciseView({ id }: { id: string }) {
 
   return (
     <Page>
-      <button type="button" onClick={() => router.back()} className="-mt-2 min-h-11 cursor-pointer self-start font-[550] text-muted">‹ Geri</button>
-      <h1 className={cx(h1, 'mt-1')}>{x.n}</h1>
+      <button type="button" onClick={() => router.back()} aria-label="Geri" className={cx(circle, 'self-start')}><Icon name="back" className="size-6 stroke-[2.2]" /></button>
+      <h1 className={cx(h1, 'mt-4')}>{x.n}</h1>
       <p className={cx(small, 'mt-1')}>{x.m}</p>
       <ExercisePics id={id} />
       <Card className="mt-2.5 grid gap-2.5">
@@ -37,7 +38,7 @@ export function ExerciseView({ id }: { id: string }) {
       <H2><label htmlFor="note">Notum</label></H2>
       {s && (
         <textarea id="note" rows={2} placeholder="Koltuk ayarı, tutuş, hatırlatma…" defaultValue={s.notes[id] ?? ''} onBlur={e => setNote(id, e.target.value)}
-          className="min-h-11 w-full resize-y rounded-[10px] border border-line bg-fill px-3 py-2.5 text-base/[1.4] text-fg" />
+          className="min-h-11 w-full resize-y rounded-2xl bg-surface px-4 py-3 text-base/[1.4] text-fg" />
       )}
       <p className={cx(small, 'mt-1.5')}>Antrenman sırasında hareketin altında görünür.</p>
 
@@ -53,7 +54,7 @@ export function ExerciseView({ id }: { id: string }) {
       )}
       {log.length ? (
         <Card>
-          <ul className="divide-y divide-fill-2">
+          <ul className="divide-y divide-line">
             {log.slice(0, 12).map(l => (
               <li key={l.t} className="flex items-baseline justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
                 <span>{fmtDate(l.t, { day: 'numeric', month: 'short' })}</span>

@@ -200,6 +200,7 @@ export function restoreBackup(next: State) {
   applyTheme(next.settings.theme);
 }
 export function wipeAll() {
-  store.replace(norm({}));
-  applyTheme('auto');
+  const fresh = norm({});
+  store.replace(fresh);
+  applyTheme(fresh.settings.theme);
 }
