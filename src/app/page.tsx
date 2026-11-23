@@ -1,14 +1,13 @@
 'use client';
 import { useState } from 'react';
 import { Icon } from '@/components/icons';
-import { Hex } from '@/components/medal';
 import { WeekPills } from '@/components/progress';
 import { NavLink, Page, useGo } from '@/components/shell';
 import { Button, Card, Chevron, H2, Segmented, Stat, card, small } from '@/components/ui';
 import { Thumb } from '@/components/visuals';
 import { discardWorkout, exportData, hideInstall, startWorkout } from '@/lib/actions';
-import { cx } from '@/lib/cx';
-import { EX, PLANS } from '@/lib/data';
+import { asset, cx } from '@/lib/cx';
+import { EX, PICS, PLANS } from '@/lib/data';
 import { ask } from '@/lib/dialog';
 import { DAY, doneCount, gymOn, lastSets, nextGym, streak, suggested, topKg } from '@/lib/domain';
 import { fmtDate, fmtTime, mins, nf, targetText } from '@/lib/format';
@@ -19,10 +18,7 @@ import type { PlanKey } from '@/lib/types';
 const greeting = (hr: number) => (hr < 5 ? 'İyi geceler' : hr < 12 ? 'Günaydın' : hr < 18 ? 'İyi günler' : 'İyi akşamlar');
 const PLAN_OPTIONS: [PlanKey, string][] = [['A', 'Full Body A'], ['B', 'Full Body B'], ['H', 'Ev']];
 
-/** Hexagon emblem for a plan: its letter for gym days, a house for the home routine. */
-function PlanEmblem({ plan }: { plan: PlanKey }) {
-  return plan === 'H' ? <Hex tier="o" icon="homeF" size={124} /> : <Hex tier={plan === 'A' ? 'b' : 'p'} text={plan} size={124} />;
-}
+const chip = 'rounded-full bg-white/20 px-3 py-1 text-sm font-semibold backdrop-blur-md';
 
 export default function HomePage() {
   const s = useStore(), now = useNow(), go = useGo();
@@ -34,6 +30,7 @@ export default function HomePage() {
   const doneToday = gymOn(H, now), last = H.find(h => !h.home), lastSame = H.find(h => h.plan === k);
   const stale = !s.settings.lastBackup || now - s.settings.lastBackup > 14 * DAY;
   const needInstall = /iphone|ipad|ipod/i.test(navigator.userAgent) && !('standalone' in navigator && navigator.standalone) && !s.settings.hideInstall;
+  const cover = (a ? a.ex.map(e => e.id) : p.items.map(i => i[0])).find(id => PICS.has(id));
   const eyebrow = a ? 'Devam ediyor' : doneToday && !pick ? `Bugün ${doneToday.name} tamamlandı ✓` : k === sug ? 'Bugün için önerilen' : 'Elle seçildi';
 
   const start = () => { startWorkout(k); setPick(null); go('/workout'); };
@@ -56,17 +53,24 @@ export default function HomePage() {
         </NavLink>
       </header>
 
-      {/* Today's workout: emblem, name, and the plan switcher */}
-      <section className="mt-8 flex flex-col items-center text-center">
-        <PlanEmblem plan={k} />
-        <p className={cx(small, 'mt-5')}>{eyebrow}</p>
-        <h1 className="mt-1 text-[30px] leading-[1.1] font-bold tracking-[-.02em]">{a ? a.name : p.name}</h1>
-        <p className="mt-1.5 text-muted">
-          {a ? `${doneCount(a)}/${a.ex.length} hareket · ${fmtTime(a.start)}’de başladı`
-             : `${p.items.length} hareket${lastSame ? ` · geçen sefer ${mins(lastSame.end - lastSame.start)}` : ''}`}
-        </p>
-        {a ? <button type="button" className="mt-2 min-h-11 cursor-pointer px-4 font-semibold text-danger" onClick={discard}>Antrenmanı Sil…</button>
-           : <Segmented className="mt-5" label="Antrenman seç" options={PLAN_OPTIONS} value={k} onChange={setPick} />}
+      {/* Today's workout: photo of its first exercise under a dark gradient, so the text is white in both themes */}
+      <section className="mt-6 flex flex-col">
+        <div
+          className="flex aspect-[4/3] flex-col justify-between rounded-[28px] bg-[#151515] bg-cover bg-center p-4 text-white"
+          style={{ backgroundImage: `linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,.05) 40%,rgba(0,0,0,.88))${cover ? `,url(${asset(`/img/${cover}-1.jpg`)})` : ''}` }}
+        >
+          <span className={cx(chip, 'self-start')}>{eyebrow}</span>
+          <div>
+            <h1 className="text-[32px] leading-[1.1] font-bold tracking-[-.02em]">{a ? a.name : p.name}</h1>
+            <div className="mt-2.5 flex flex-wrap gap-2">
+              {(a ? [`${doneCount(a)}/${a.ex.length} hareket`, `${fmtTime(a.start)}’de başladı`]
+                  : [`${p.items.length} hareket`, ...(lastSame ? [`geçen sefer ${mins(lastSame.end - lastSame.start)}`] : [])]
+              ).map(x => <span key={x} className={chip}>{x}</span>)}
+            </div>
+          </div>
+        </div>
+        {a ? <button type="button" className="mt-2 min-h-11 cursor-pointer self-center px-4 font-semibold text-danger" onClick={discard}>Antrenmanı Sil…</button>
+           : <Segmented className="mt-3 self-center" label="Antrenman seç" options={PLAN_OPTIONS} value={k} onChange={setPick} />}
       </section>
 
       {needInstall && (
