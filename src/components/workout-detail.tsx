@@ -3,15 +3,33 @@
 import { useSearchParams } from 'next/navigation';
 import { deleteWorkout } from '@/lib/actions';
 import { cx } from '@/lib/cx';
+import { MU } from '@/lib/data';
 import { ask } from '@/lib/dialog';
 import { badges, streak, topKg, volume } from '@/lib/domain';
 import { dur, fmtDate, kgs, nf, setText } from '@/lib/format';
 import { useStore } from '@/lib/store';
+import type { Workout } from '@/lib/types';
 import { Icon, iconShapes } from './icons';
 import { BadgeTile, Hex, Medal } from './medal';
 import { Confetti } from './progress';
 import { BackLink, Dock, NavLink, Page, useGo } from './shell';
 import { Badge, Button, Card, Chevron, H2, Stat, btn, card, h1, small } from './ui';
+
+const MUSCLE: Record<string, string> = {
+  quadriceps: 'Ön bacak', gluteal: 'Kalça', hamstring: 'Arka bacak', upper_back: 'Sırt', trapezius: 'Trapez', back_deltoids: 'Arka omuz',
+  front_deltoids: 'Omuz', biceps: 'Biceps', triceps: 'Triceps', chest: 'Göğüs', abs: 'Karın', obliques: 'Yan karın', lower_back: 'Bel',
+  forearm: 'Ön kol', calves: 'Baldır', neck: 'Boyun',
+};
+/** Share of the workout's sets per primary muscle, biggest first. */
+function muscleSplit(h: Workout) {
+  const n: Record<string, number> = {};
+  h.ex.forEach(e => {
+    const prim = (MU[e.id]?.[0] ?? '').split(' ').filter(Boolean);
+    prim.forEach(m => { n[m] = (n[m] || 0) + e.sets.length / prim.length; });
+  });
+  const total = Object.values(n).reduce((a, b) => a + b, 0);
+  return Object.entries(n).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]).map(([m, v]) => ({ name: MUSCLE[m] ?? m, pct: Math.round((v / total) * 100) }));
+}
 
 /** "Yeni rekor" sticker: trophy, dumbbell and a tilted outlined label. */
 function RecordSticker() {
@@ -49,6 +67,7 @@ export function WorkoutDetail({ summary }: { summary?: boolean }) {
     return { id: e.id, name: e.name, text: `${nf(topKg(e.sets))} kg × ${best.reps}` };
   });
   const date = fmtDate(h.end, { day: 'numeric', month: 'short', year: 'numeric' });
+  const split = muscleSplit(h).slice(0, 4);
   const rise = summary ? 'animate-rise motion-reduce:animate-none' : '';
 
   const remove = async () => {
@@ -116,6 +135,20 @@ export function WorkoutDetail({ summary }: { summary?: boolean }) {
               {earned.map(b => <BadgeTile key={b.id} b={b} earnedAt={h.end} />)}
             </div>
           </Card>
+        )}
+
+        {split.length > 0 && (
+          <>
+            <H2>Kas dağılımı</H2>
+            <Card className="grid gap-3.5">
+              {split.map(m => (
+                <div key={m.name}>
+                  <div className="flex items-baseline justify-between"><span className="font-medium">{m.name}</span><span className="num text-sm text-muted">%{m.pct}</span></div>
+                  <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-fill-2"><i className="block h-full rounded-full bg-flame" style={{ width: `${m.pct}%` }} /></div>
+                </div>
+              ))}
+            </Card>
+          </>
         )}
 
         <H2>Hareketler</H2>

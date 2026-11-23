@@ -37,8 +37,8 @@ export function MedalDefs() {
 }
 
 /** The hexagon itself. With a `label` the glyph moves up and the label sits under it. */
-export function Hex({ tier, icon, label, locked, size = 68, className }:
-  { tier: Tier; icon: IconName; label?: string; locked?: boolean; size?: number; className?: string }) {
+export function Hex({ tier, icon, text, label, locked, size = 68, className }:
+  { tier: Tier; icon?: IconName; text?: string; label?: string; locked?: boolean; size?: number; className?: string }) {
   const ink = locked ? 'var(--g500)' : '#fff';
   return (
     <svg width={size} height={size} viewBox="0 0 100 100" aria-hidden="true"
@@ -58,7 +58,8 @@ export function Hex({ tier, icon, label, locked, size = 68, className }:
           <path d={SPARK} transform="translate(74 33) scale(.7)" fill="#fff" opacity=".9" />
         </>
       )}
-      <g transform={label ? 'translate(33.2 23) scale(1.4)' : 'translate(23.6 23.6) scale(2.2)'} fill={ink} fillRule="evenodd">{iconShapes(icon)}</g>
+      {icon && <g transform={label ? 'translate(33.2 23) scale(1.4)' : 'translate(23.6 23.6) scale(2.2)'} fill={ink} fillRule="evenodd">{iconShapes(icon)}</g>}
+      {text && <text x="50" y="65" fontSize="44" fill={ink} textAnchor="middle" className="font-sans font-bold">{text}</text>}
       {label && (
         <text x="50" y="76" fontSize={label.length > 3 ? 13 : 16} fill={ink} textAnchor="middle" className="font-sans font-bold tracking-[-.02em]">{label}</text>
       )}

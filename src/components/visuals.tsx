@@ -20,12 +20,23 @@ function FigSvg({ fig, label, className }: { fig: Fig; label?: string; className
   );
 }
 
-/** Square thumbnail of an exercise (end position). */
-export function Thumb({ id, size = 64, className }: { id: string; size?: number; className?: string }) {
+/** Wide picture of an exercise (end position) for the top of the workout screen. */
+export function Cover({ id }: { id: string }) {
+  return (
+    <div className="aspect-[16/9] overflow-hidden rounded-[28px] bg-surface">
+      {PICS.has(id)
+        ? <Image className="size-full object-cover" src={asset(`/img/${id}-1.jpg`)} alt="" width={600} height={400} priority />
+        : FIG[id] && <FigSvg fig={FIG[id][1]} className="bg-surface!" />}
+    </div>
+  );
+}
+
+/** Thumbnail of an exercise (end position); square unless width/height are given. */
+export function Thumb({ id, size = 64, width = size, height = size, className }: { id: string; size?: number; width?: number; height?: number; className?: string }) {
   const cls = cx('block flex-none overflow-hidden rounded-xl bg-fill-2 object-cover', className);
-  const style = { width: size, height: size };
+  const style = { width, height };
   return PICS.has(id)
-    ? <Image className={cls} style={style} src={asset(`/img/${id}-1.jpg`)} alt="" width={size} height={size} />
+    ? <Image className={cls} style={style} src={asset(`/img/${id}-1.jpg`)} alt="" width={width} height={height} />
     : <span className={cls} style={style}>{FIG[id] && <FigSvg fig={FIG[id][1]} />}</span>;
 }
 
@@ -81,6 +92,25 @@ export function Spark({ values, unit = 'kg', label = 'Ağırlık' }: { values: n
       aria-label={`${label} gelişimi: ${nf(values[0])} ${unit} → ${nf(values[values.length - 1])} ${unit}`}>
       <polyline fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" points={pts.join(' ')} />
       <circle cx={last[0]} cy={last[1]} r="3.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+/** Filled line chart of a value over time (oldest first), in the current text colour. Needs at least two points. */
+export function AreaChart({ values, label }: { values: number[]; label: string }) {
+  const w = 320, h = 150, p = 8, mn = Math.min(...values), r = Math.max(...values) - mn || 1;
+  const pts = values.map((x, i) => [p + (i * (w - 2 * p)) / (values.length - 1), p + (1 - (x - mn) / r) * (h - 2 * p - 20)].map(n => +n.toFixed(1)));
+  const line = pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x} ${y}`).join(' '), last = pts[pts.length - 1];
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} role="img" aria-label={label} className="block w-full">
+      <defs>
+        <linearGradient id="area-fill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="currentColor" stopOpacity=".35" /><stop offset="1" stopColor="currentColor" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d={`${line} L${w - p} ${h} L${p} ${h} Z`} fill="url(#area-fill)" />
+      <path d={line} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+      <circle cx={last[0]} cy={last[1]} r="4.5" fill="currentColor" />
     </svg>
   );
 }

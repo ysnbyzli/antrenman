@@ -21,18 +21,18 @@ export function WeekPills({ history, now }: { history: Workout[]; now: number })
   // gym days still ahead this week, in order: they alternate starting from the next workout
   const planned = week.filter(x => !x.gym && !x.home && gymDay(x.d) && !x.past).map(x => x.n);
   return (
-    <div className="flex gap-[5px]" role="list" aria-label="Bu haftanın günleri">
+    <div className="grid grid-cols-7 justify-items-center" role="list" aria-label="Bu haftanın günleri">
       {week.map(({ n, d, today, gym, home, past }) => {
         const order = planned.indexOf(n), nx = order % 2 === 0 ? first : first === 'A' ? 'B' : 'A';
-        const [cls, txt, label] = gym ? ['bg-fg text-surface', '✓', `${gym.name} tamamlandı`]
+        const [cls, txt, label] = gym ? ['bg-flame text-white', '✓', `${gym.name} tamamlandı`]
           : home ? ['bg-ok-bg text-ok', '✓', 'ev rutini tamamlandı']
           : gymDay(d) && past ? ['bg-fill text-muted', '–', 'yapılmadı']
           : order >= 0 ? ['border-[1.5px] border-dashed border-line-2 text-fg', nx, `Full Body ${nx} planlı`]
           : ['bg-fill text-muted', '', 'boş gün'];
         return (
-          <div key={n} role="listitem" aria-label={`${n}: ${label}`} className="flex flex-col items-center gap-[5px] text-[11px] text-muted">
-            <i className={cx('grid h-[46px] w-[27px] place-items-center rounded-[14px] text-xs font-semibold not-italic', cls)}>{txt}</i>
-            <span className={cx(today && 'font-bold text-fg')}>{n[0]}</span>
+          <div key={n} role="listitem" aria-label={`${n}: ${label}`} className="flex flex-col items-center gap-2 text-xs text-muted">
+            <span className={cx(today && 'font-bold text-fg')}>{n}</span>
+            <i className={cx('grid size-9 place-items-center rounded-full text-sm font-semibold not-italic', cls, today && !gym && 'ring-2 ring-fg ring-offset-2 ring-offset-surface')}>{txt}</i>
           </div>
         );
       })}
