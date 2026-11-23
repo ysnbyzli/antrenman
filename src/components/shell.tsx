@@ -17,20 +17,16 @@ const types = (from: string, to: string) => {
   return d > 0 ? ['nav-forward'] : d < 0 ? ['nav-back'] : [];
 };
 
-/** Every page renders inside this. `bare` pages (workout, summary) have no tab bar underneath; `glow` adds the warm light at the top. */
-export function Page({ children, bare, glow }: { children: ReactNode; bare?: boolean; glow?: boolean }) {
+/** Every page renders inside this. `bare` pages (workout, summary) have no tab bar underneath. */
+export function Page({ children, bare }: { children: ReactNode; bare?: boolean }) {
   return (
     <ViewTransition enter={SLIDE} exit={SLIDE} default="none">
       <main
         className={cx(
-          'relative isolate mx-auto flex min-h-dvh max-w-[520px] flex-col px-5 pt-[calc(env(safe-area-inset-top)+16px)]',
+          'mx-auto flex min-h-dvh max-w-[520px] flex-col px-5 pt-[calc(env(safe-area-inset-top)+16px)]',
           bare ? 'pb-0' : 'pb-[calc(max(env(safe-area-inset-bottom),22px)+84px)]',
         )}
       >
-        {glow && (
-          <div aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[460px] bg-[radial-gradient(75%_62%_at_50%_0%,color-mix(in_srgb,var(--flame)_30%,transparent),transparent_72%)]" />
-        )}
         {children}
       </main>
     </ViewTransition>

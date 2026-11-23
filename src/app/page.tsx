@@ -23,7 +23,7 @@ const chip = 'rounded-full bg-white/20 px-3 py-1 text-sm font-semibold backdrop-
 export default function HomePage() {
   const s = useStore(), now = useNow(), go = useGo();
   const [pick, setPick] = useState<PlanKey | null>(null); // plan chosen by hand instead of the suggestion
-  if (!s) return <Page glow>{null}</Page>;
+  if (!s) return <Page>{null}</Page>;
 
   const a = s.active, H = s.history, st = streak(H, s.settings.goal), left = Math.max(0, st.goal - st.week);
   const sug = suggested(H, new Date(now)), k = a ? a.plan : pick || sug, p = PLANS[k];
@@ -40,7 +40,7 @@ export default function HomePage() {
   const backup = () => exportData().catch(err => ask('Yedek oluşturulamadı', (err as Error).message, 'Tamam', { cancel: false }));
 
   return (
-    <Page glow>
+    <Page>
       <header className="flex items-center justify-between gap-2.5">
         <div>
           <p className={small}>{fmtDate(now)}</p>

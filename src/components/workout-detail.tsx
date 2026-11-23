@@ -85,7 +85,7 @@ export function WorkoutDetail({ summary }: { summary?: boolean }) {
   };
 
   return (
-    <Page bare={summary} glow>
+    <Page bare={summary}>
       <div className="flex-1 pb-6">
         {summary && q.get('new') && <Confetti />}
         <BackLink href={summary ? '/' : '/history'}>{summary ? 'Ana Sayfa' : 'Geçmiş'}</BackLink>

@@ -11,7 +11,7 @@ import { useStore } from '@/lib/store';
 
 export default function StreakPage() {
   const s = useStore(), now = useNow();
-  if (!s) return <Page glow>{null}</Page>;
+  if (!s) return <Page>{null}</Page>;
 
   const H = s.history, st = streak(H, s.settings.goal), all = badges(H, s.settings.goal), left = Math.max(0, st.goal - st.week);
   const got = all.filter(b => b.got).length;
@@ -19,7 +19,7 @@ export default function StreakPage() {
   const earnedAt = (id: string) => H.find(h => h.badges?.includes(id))?.end;
 
   return (
-    <Page glow>
+    <Page>
       <BackLink href="/">Ana Sayfa</BackLink>
 
       {/* the streak as the hero: flame emblem, the number, what it takes to keep it */}
